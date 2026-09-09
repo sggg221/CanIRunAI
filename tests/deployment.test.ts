@@ -173,15 +173,14 @@ test("a new model fails preflight on an outdated runtime", async () => {
 test("a stopped outdated runtime is rechecked before any model pull", async () => {
   const dir = await mkdtemp(path.join(os.tmpdir(), "canirun-runtime-version-"));
   const original = globalThis.fetch;
-  let versions = 0;
+  let running = false, started = false, checkedAfterStart = false;
   const requests: string[] = [];
-  await mkdir(path.join(dir, "runtime/bin"), { recursive: true });
-  await writeFile(path.join(dir, "runtime/bin/ollama"), "#!/bin/sh\nexit 0\n", { mode: 0o755 });
   globalThis.fetch = async input => {
     const url = String(input);
     requests.push(url);
     if (url.endsWith("/api/version")) {
-      if (++versions <= 3) throw new Error("Runtime stopped");
+      if (!running) throw new Error("Runtime stopped");
+      checkedAfterStart = true;
       return Response.json({ version: "0.16.0" });
     }
     if (url.endsWith("/api/ps") || url.endsWith("/api/tags")) return Response.json({ models: [] });
@@ -189,12 +188,13 @@ test("a stopped outdated runtime is rechecked before any model pull", async () =
     throw new Error(url);
   };
   try {
-    const manager = new Manager(dir);
+    const manager = new Manager(dir, async () => { started = true; running = true; });
     await manager.init();
     manager.device = async () => device;
     const deployment = await manager.deploy("qwen3.5-0.8b");
     await waitUntil(() => !manager.busy);
-    assert.ok(versions >= 5);
+    assert.equal(started, true);
+    assert.equal(checkedAfterStart, true);
     assert.equal(deployment.stage, "failed");
     assert.equal(deployment.error?.code, "unsupported");
     assert.match(deployment.error!.message, /Ollama 0.17.1/);

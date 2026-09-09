@@ -11,11 +11,14 @@ const output = args[1] ? path.resolve(args[1]) : path.join(root, "apps/site/publ
 // Explicit files prevent runtime state, secrets, node_modules and frontend source entering a release.
 const files = [
   "Start CanIRunAI Helper.command",
+  "Start CanIRunAI Helper.cmd",
   "docs/HELPER.md",
   "scripts/helper.ts",
   "apps/bridge/server.ts",
   "apps/bridge/manager.ts",
   "apps/bridge/hardware.ts",
+  "apps/bridge/windows-hardware.ts",
+  "apps/bridge/runtime-archive.ts",
   "apps/bridge/runtime.ts",
   "apps/bridge/chat.ts",
   "packages/protocol/index.ts",
@@ -54,7 +57,7 @@ lock.packages[""].engines = manifest.engines;
 for (const [name, data] of [["package.json", manifest], ["package-lock.json", lock]])
   entries.push({ name, content: JSON.stringify(data, null, 2) + "\n", mode: 0o644 });
 await mkdir(path.dirname(output), { recursive: true });
-const result = spawnSync("python3", ["-c", `
+const result = spawnSync(process.platform === "win32" ? "python" : "python3", ["-c", `
 import json, os, stat, sys, zipfile
 entries = json.load(sys.stdin)
 output = sys.argv[1]

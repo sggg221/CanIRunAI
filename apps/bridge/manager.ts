@@ -11,6 +11,12 @@ import {
 } from "../../packages/protocol/index.ts";
 import { detectHardware } from "./hardware.ts";
 import { ollama, OLLAMA, runtimeStatus, startRuntime, installRuntime } from "./runtime.ts";
+import { runtimeInstallBytes } from "../../packages/runtime-registry/index.ts";
+export function reclaimableModelMemory(device: DeviceProfile, loaded: { modelId: string | null; memoryGB: number }[]) {
+  return device.os === "darwin" && device.architecture === "arm64"
+    ? loaded.filter((model) => model.modelId).reduce((total, model) => total + model.memoryGB, 0)
+    : 0;
+}
 const G = 1073741824;
 export class LocalFailure extends Error {
   constructor(
@@ -117,7 +123,7 @@ export class Manager {
           ...device,
           freeMemoryGB:
             device.freeMemoryGB +
-            running.filter((r: any) => r.modelId).reduce((n: number, r: any) => n + r.memoryGB, 0),
+            reclaimableModelMemory(device, running),
         },
         models,
       ),
@@ -148,13 +154,13 @@ export class Manager {
           ...device,
           freeMemoryGB:
             device.freeMemoryGB +
-            loaded.filter((r: any) => r.modelId).reduce((n: number, r: any) => n + r.memoryGB, 0),
+            reclaimableModelMemory(device, loaded),
         },
         model,
       ),
       v = model.variants.find((v) => v.id === result.recommendedVariant)!;
     if (!device.supported)
-      throw new LocalFailure("unsupported", "This version requires Apple Silicon macOS.", "none");
+      throw new LocalFailure("unsupported", "This version requires Apple Silicon macOS or x64 Windows 10 (build 19045+) / Windows 11.", "none");
     if (!result.compatible)
       throw new LocalFailure(
         result.reasons.some((r) => r.includes("storage")) ? "disk_full" : "oom",
@@ -176,7 +182,7 @@ export class Manager {
         variantId: v.id,
         runtimeId: "ollama" as const,
         context: ctx,
-        backend: "metal" as const,
+        backend: device.os === "darwin" ? "metal" as const : "auto" as const,
         downloadBytes: v.bytes,
         memoryGB: v.weightGB + result.memory.runtime + kvMemory(v, ctx),
       },
@@ -314,7 +320,7 @@ export class Manager {
           "none",
         );
       d.download.completed = d.download.total;
-      await this.stage(d, "configuring", `Ollama · Metal · ${d.plan.context} context · local-only`);
+      await this.stage(d, "configuring", `Ollama · ${d.plan.backend === "metal" ? "Metal" : "automatic GPU/CPU"} · ${d.plan.context} context · local-only`);
       await this.preflight(d.modelId, d.plan.context);
       await this.stopOthers(d.modelId, false);
       await this.stage(d, "starting", "Loading the model into memory.");
@@ -419,13 +425,17 @@ export class Manager {
       throw new LocalFailure("busy", "Another operation is in progress.", "none");
     this.busy = true;
     try {
-      if (!(await this.device()).supported)
-        throw new LocalFailure("unsupported", "运行环境安装仅支持 Apple Silicon Mac。", "none");
+      const device = await this.device();
+      if (!device.supported)
+        throw new LocalFailure("unsupported", "运行环境安装仅支持 Apple Silicon Mac 或 x64 Windows 10（19045+）/ Windows 11。", "none");
       try {
         await this.runtimeStarter(this.dataDir);
         const existing = await runtimeStatus();
         if (existing.available) return existing;
       } catch {}
+      const requiredBytes = runtimeInstallBytes(device.os, device.architecture);
+      if (device.diskFreeGB * G < requiredBytes)
+        throw new LocalFailure("disk_full", "Free storage for the runtime archive and extracted files before installing.", "free_disk");
       await installRuntime(this.dataDir);
       const installed = await runtimeStatus();
       if (!installed.available) throw new LocalFailure("runtime_offline", "安装后 Ollama 未就绪，请检查助手终端。", "none");

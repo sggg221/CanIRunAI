@@ -6,7 +6,7 @@ import type {
 } from "../../../packages/protocol/index.ts";
 
 export type Configuration = {
-  platform: "apple" | "unsupported";
+  platform: "apple" | "windows" | "unsupported";
   memoryGB: number;
   freeMemoryGB: number;
   diskFreeGB: number;
@@ -39,7 +39,7 @@ export function readConfiguration(params: URLSearchParams): Configuration {
   const memoryGB = bounded(params.get("memory"), defaults.memoryGB, 4, 512);
   return {
     platform:
-      params.get("platform") === "unsupported" ? "unsupported" : "apple",
+      params.get("platform") === "unsupported" ? "unsupported" : params.get("platform") === "windows" ? "windows" : "apple",
     memoryGB,
     freeMemoryGB: bounded(
       params.get("free"),
@@ -76,10 +76,10 @@ export function deviceFromConfiguration(config: Configuration): DeviceProfile {
     memoryGB: config.memoryGB,
     freeMemoryGB: config.freeMemoryGB,
     diskFreeGB: config.diskFreeGB,
-    os: config.platform === "apple" ? "macOS" : "unsupported",
+    os: config.platform === "apple" ? "darwin" : config.platform === "windows" ? "win32" : "unsupported",
     osVersion: "Unknown",
-    architecture: config.platform === "apple" ? "arm64" : "Unknown",
-    supported: config.platform === "apple",
+    architecture: config.platform === "apple" ? "arm64" : config.platform === "windows" ? "x64" : "Unknown",
+    supported: config.platform !== "unsupported",
     model: "手动配置",
     chip: "Unknown",
     cpuCores: 0,
@@ -103,8 +103,10 @@ export const statusLabels = {
   unsupported: "暂不适合",
 };
 const reasonLabels: Record<string, string> = {
+  "This release supports Apple Silicon macOS and Windows 10 22H2 (build 19045+) / Windows 11 with an x64 helper only; Linux, Intel Macs and Windows ARM64 helpers are unsupported.":
+    "部署支持 Apple Silicon Mac 和 Windows 10 22H2 / 11 x64；Windows ARM、旧版 Windows、Intel Mac 与 Linux 暂不支持。",
   "This release supports Apple Silicon macOS only.":
-    "目前只评估 Apple Silicon Mac，不能据此判断其他平台。",
+    "当前助手仅支持 Apple Silicon Mac，请下载新版助手以使用 Windows 功能。",
   "Not enough free storage.": "剩余磁盘空间不足，请预留下载与安装空间。",
   "Not enough safe memory for practical conversation.":
     "可用内存不足以支持实用的对话上下文。",

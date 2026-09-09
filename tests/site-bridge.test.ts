@@ -35,7 +35,15 @@ const fakeMac: DeviceProfile = {
   powerMode: null,
 };
 
-test("site bridge: real HTTP pairing, detected status, deployment, streaming chat, rotation and revocation", async () => {
+const fakeWindows: DeviceProfile = {
+  ...fakeMac, os: "win32", osVersion: "10.0.22631", architecture: "x64",
+  model: "Explicit Windows test fixture, not real hardware", metal: null, gpuCores: null,
+  gpus: [{ name: "TEST NVIDIA GPU", vendor: "nvidia", memoryGB: 24, freeMemoryGB: 20, source: "nvidia-smi" }],
+  gpuDetectionComplete: true,
+};
+
+for (const fakeDevice of [fakeMac, fakeWindows])
+test(`site bridge (${fakeDevice.os} fixture): real HTTP pairing, deployment, chat, rotation and revocation`, async () => {
   const dir = await mkdtemp(path.join(os.tmpdir(), "canirun-site-bridge-"));
   const nativeFetch = globalThis.fetch;
   const bridge = await createBridge({
@@ -47,7 +55,7 @@ test("site bridge: real HTTP pairing, detected status, deployment, streaming cha
     bridge.server.once("error", reject);
     bridge.server.listen(31421, "127.0.0.1", resolve);
   });
-  bridge.manager.device = async () => fakeMac;
+  bridge.manager.device = async () => fakeDevice;
   const model = getModel("qwen3-0.6b"),
     variant = model.variants[0];
   let installed = false,
@@ -124,7 +132,8 @@ test("site bridge: real HTTP pairing, detected status, deployment, streaming cha
     const paired = saved as Session | null;
     assert.ok(paired);
     const status = await client.status();
-    assert.equal(status.device.model, fakeMac.model);
+    assert.equal(status.device.model, fakeDevice.model);
+    assert.deepEqual(status.device.gpus, fakeDevice.gpus);
     assert.equal(status.runtime.version, "0.33.3");
     assert.equal(status.installed.length, 0);
     await assert.rejects(
@@ -137,6 +146,7 @@ test("site bridge: real HTTP pairing, detected status, deployment, streaming cha
     const deployed = await client.status();
     assert.equal(pulled, true);
     assert.equal(deployed.deployments[0].stage, "running");
+    assert.equal(deployed.deployments[0].plan.backend, fakeDevice.os === "win32" ? "auto" : "metal");
     assert.equal(deployed.deployments[0].download.completed, variant.bytes);
     assert.ok(deployed.running.some((m) => m.modelId === model.id));
     let answer = "";

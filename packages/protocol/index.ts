@@ -1,5 +1,13 @@
 import { z } from "zod";
 const gb = z.number().nonnegative();
+export const GPUProfileSchema = z.object({
+  name: z.string(),
+  vendor: z.enum(["nvidia", "amd", "intel", "unknown"]),
+  memoryGB: gb.nullable(),
+  freeMemoryGB: gb.nullable(),
+  source: z.enum(["nvidia-smi", "cim"]),
+}).strict();
+export type GPUProfile = z.infer<typeof GPUProfileSchema>;
 export const DeviceProfileSchema = z
   .object({
     os: z.string(),
@@ -10,6 +18,9 @@ export const DeviceProfileSchema = z
     chip: z.string(),
     cpuCores: z.number(),
     gpuCores: z.number().nullable(),
+    gpus: z.array(GPUProfileSchema).optional(),
+    // Enumeration completeness, not a guarantee that every adapter reports VRAM.
+    gpuDetectionComplete: z.boolean().optional(),
     memoryGB: gb,
     freeMemoryGB: gb,
     diskFreeGB: gb,
@@ -121,7 +132,7 @@ export const DeploymentPlanSchema = z.object({
   variantId: z.string(),
   runtimeId: z.literal("ollama"),
   context: z.number(),
-  backend: z.literal("metal"),
+  backend: z.enum(["metal", "auto"]),
   downloadBytes: gb,
   memoryGB: gb,
 });

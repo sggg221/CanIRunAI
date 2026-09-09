@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import type { Recommendation } from "../../../packages/protocol/index.ts";
 import { runtimeCompatible } from "../../../packages/compatibility-engine/index.ts";
-import { runtime } from "../../../packages/runtime-registry/index.ts";
+import { getRuntime } from "../../../packages/runtime-registry/index.ts";
 import { fileSize, selectedVariant } from "./catalog";
 import type { LocalBridge } from "./use-bridge";
 
@@ -39,7 +39,7 @@ export function ConnectionPanel({ bridge }: { bridge: LocalBridge }) {
         </span>
         <div>
           <p className="eyebrow">WEBSITE + LOCAL HELPER</p>
-          <h2 id="connection-title">让网页，连接你的 Mac</h2>
+          <h2 id="connection-title">让网页，连接你的电脑</h2>
         </div>
       </div>
       {bridge.phase === "connected" ? (
@@ -84,14 +84,15 @@ export function ConnectionPanel({ bridge }: { bridge: LocalBridge }) {
             download
           >
             <Download size={16} />
-            下载 Mac 本地助手 <ArrowRight size={15} />
+            下载 Windows / Mac 助手 <ArrowRight size={15} />
           </a>
           <p className="helper-requirements">
-            Apple Silicon Mac · 建议 Node.js 24 · 非独立签名 App
+            Windows 10 22H2 / 11 x64 或 Apple Silicon Mac · 建议 Node.js 24
           </p>
           <ol className="connection-steps">
             <li>
-              解压后双击 <code>Start CanIRunAI Helper.command</code>。
+              解压后，Windows 双击 <code>Start CanIRunAI Helper.cmd</code>；
+              Mac 双击 <code>Start CanIRunAI Helper.command</code>。
             </li>
             <li>保持助手终端打开，按浏览器提示允许访问本地网络。</li>
             <li>助手会打开配对网页；未自动连接时输入终端中的 8 位配对码。</li>
@@ -152,12 +153,12 @@ export function ConnectionPanel({ bridge }: { bridge: LocalBridge }) {
         <p>
           请使用此处的新版助手，旧 v0.2.0 ZIP 不支持此 GitHub
           网页的连接。建议使用最新版 Chrome 或
-          Edge，并允许“本地网络访问”。如果浏览器或管理策略仍拦截本机请求，可使用下方指南中的原本地应用运行包，在它的
-          localhost:3000 页面操作。不要关闭浏览器安全保护。
+          Edge，并允许“本地网络访问”。若浏览器或管理策略仍拦截本机请求，请检查站点权限或联系管理员。
+          Mac 用户也可使用下方指南中的原本地应用；原运行包不支持 Windows。不要关闭浏览器安全保护。
         </p>
         <p>
-          启动器若被 macOS
-          拦截，请先核对下载来源，再按系统提示允许打开；网页不会自动绕过系统确认。
+          助手是源代码运行包，不是已签名的安装程序。若被 SmartScreen、Defender 或 macOS
+          拦截，请核对来源并遵循系统及组织策略；不要关闭安全软件或绕过执行策略。无需以管理员身份启动。
         </p>
       </details>
     </section>
@@ -199,7 +200,7 @@ export function LiveDevicePanel({ bridge }: { bridge: LocalBridge }) {
           <dd>{device.diskFreeGB.toFixed(1)} GiB</dd>
         </div>
         <div>
-          <dt>CPU / GPU 核心</dt>
+          <dt>CPU 逻辑处理器 / GPU 核心</dt>
           <dd>
             {device.cpuCores} / {device.gpuCores ?? "未知"}
           </dd>
@@ -213,11 +214,36 @@ export function LiveDevicePanel({ bridge }: { bridge: LocalBridge }) {
           </dd>
         </div>
       </dl>
+      {device.os === "win32" && (
+        <div className="gpu-detection">
+          <h3>显卡与独立显存</h3>
+          {device.gpus?.length ? (
+            <ul>
+              {device.gpus.map((gpu, index) => (
+                <li key={`${gpu.name}-${index}`}>
+                  <strong>{gpu.name}</strong>
+                  <span>
+                    {gpu.memoryGB === null ? "显存容量未知" : `显存 ${gpu.memoryGB.toFixed(1)} GiB`}
+                    {gpu.freeMemoryGB === null ? " · 可用显存未知" : ` · 可用 ${gpu.freeMemoryGB.toFixed(1)} GiB`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>{device.gpuDetectionComplete ? "系统未报告显卡。" : "未能读取显卡信息，不代表没有显卡。"}</p>
+          )}
+          {device.gpus?.length && !device.gpuDetectionComplete ? <p>部分显卡检测未完成，以上信息可能不完整。</p> : null}
+          <p>
+            NVIDIA 显存通过驱动工具读取；其他显卡没有可靠读数时显示未知。
+            推荐按可用系统内存保守计算，不将显存与内存相加。GPU 是否加速由 Ollama 和驱动决定，未实测速度。
+          </p>
+        </div>
+      )}
       <p className={device.supported ? "connection-hint" : "local-error"}>
         <ShieldCheck size={15} />
         {device.supported
           ? "已按实际配置重新评估。适配仍是估算，不代表所有模型都已实测。"
-          : "已检测到设备，但本版只支持在 Apple Silicon Mac 部署。没有将当前平台伪装为 Mac。"}
+          : "已检测到设备，但部署仅支持 Windows 10 22H2 / 11 x64 和 Apple Silicon Mac。Windows ARM、旧版 Windows、Intel Mac 与 Linux 暂不支持部署。"}
       </p>
     </section>
   );
@@ -245,7 +271,8 @@ export function DeployDialog({
       status.runtime.version,
       entry.model.minimumRuntimeVersion,
     );
-  const canInstall = runtimeCompatible(
+  const runtime = status ? getRuntime(status.device.os, status.device.architecture) : null;
+  const canInstall = !!runtime && runtimeCompatible(
     runtime.version,
     entry.model.minimumRuntimeVersion,
   );
@@ -315,7 +342,7 @@ export function DeployDialog({
         >
           <X size={20} />
         </button>
-        <p className="eyebrow">DEPLOY ON YOUR MAC</p>
+        <p className="eyebrow">DEPLOY ON YOUR COMPUTER</p>
         <h2 id="deploy-title">部署 {entry.model.name}</h2>
         <p className="dialog-description">
           下载与推理都在你的电脑上执行。部署前会再次检查内存、磁盘、运行环境与固定模型校验值。
@@ -338,7 +365,7 @@ export function DeployDialog({
             <dd>{status?.runtime.version ?? "未运行"}</dd>
           </div>
         </dl>
-        {needsRuntime && (
+        {needsRuntime && runtime && (
           <label className="consent">
             <input
               type="checkbox"
@@ -386,7 +413,7 @@ export function DeployDialog({
         )}
         {!status?.device.supported && (
           <p className="local-error">
-            请连接 Apple Silicon Mac 上的助手后部署。
+            请连接受支持的 Windows x64 或 Apple Silicon Mac 助手后部署。
           </p>
         )}
         {status && !entry.result.compatible && (

@@ -16,11 +16,32 @@ export function pairingURL(code: string) {
   return url.href;
 }
 
+export function helperDataDir(
+  platform: string = process.platform,
+  home = os.homedir(),
+  env: NodeJS.ProcessEnv = process.env,
+) {
+  if (env.CANIRUN_DATA_DIR) return env.CANIRUN_DATA_DIR;
+  if (platform === "win32")
+    return path.win32.join(env.LOCALAPPDATA || path.win32.join(home, "AppData", "Local"), "CanIRunAI");
+  if (platform === "darwin") return path.join(home, "Library", "Application Support", "CanIRunAI");
+  return path.join(env.XDG_DATA_HOME || path.join(home, ".local", "share"), "CanIRunAI");
+}
+
+export function browserCommand(code: string, platform: string = process.platform, env: NodeJS.ProcessEnv = process.env) {
+  const url = pairingURL(code);
+  if (platform === "darwin") return { file: "/usr/bin/open", args: [url] };
+  if (platform === "win32") return {
+    file: path.win32.join(env.SystemRoot || "C:\\Windows", "System32", "rundll32.exe"),
+    args: ["url.dll,FileProtocolHandler", url],
+  };
+  return null;
+}
+
 async function main() {
   if (!supportedNode(process.versions.node))
     throw new Error("Node.js >=22.13 is required. Install Node.js 24 from https://nodejs.org and try again.");
-  const dataDir = process.env.CANIRUN_DATA_DIR ??
-    path.join(os.homedir(), "Library", "Application Support", "CanIRunAI");
+  const dataDir = helperDataDir();
   const showCode = (code: string) =>
     console.log(`CanIRunAI 本机配对码：${code}（10 分钟内有效，请勿分享）`);
   const bridge = await createBridge({ dataDir, onPairCode: showCode });
@@ -43,9 +64,10 @@ async function main() {
   };
   process.once("SIGINT", stop);
   process.once("SIGTERM", stop);
-  if (process.platform === "darwin" && process.env.CANIRUN_NO_OPEN !== "1") {
+  const browser = browserCommand(bridge.getPairCode());
+  if (browser && process.env.CANIRUN_NO_OPEN !== "1") {
     // Only the initial launch opens a tab; pairing itself rotates the next code.
-    execFile("/usr/bin/open", [pairingURL(bridge.getPairCode())], (error) => {
+    execFile(browser.file, browser.args, { windowsHide: true }, (error) => {
       if (error) console.error(`Could not open the browser. Open ${PUBLIC_SITE} and enter the pairing code above.`);
     });
   }

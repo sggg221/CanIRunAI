@@ -37,9 +37,25 @@ jobs:
           path: apps/site/dist
           if-no-files-found: error
 
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm run check
+      - name: Windows detection, runtime safety and packaged launcher
+        run: node --import tsx --test "tests/windows-*.test.ts" tests/runtime-manager.test.ts tests/site-bridge.test.ts
+
   deploy:
     if: github.event_name == 'workflow_dispatch' && inputs.deploy && github.ref == 'refs/heads/main'
-    needs: build
+    needs: [build, windows]
     runs-on: ubuntu-latest
     concurrency:
       group: github-pages

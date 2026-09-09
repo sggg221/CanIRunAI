@@ -21,7 +21,9 @@ npm run site:preview
 
 - 未授权浏览时不主动探测本机；模型目录和展开的手动评估可用。
 - 新版助手启动并配对后显示真实设备，不再使用示例参数。刷新网页可恢复未过期授权。
-- 非 Apple Silicon 平台、内存或磁盘不足时，部署入口禁用；版本过旧时给出更新提示。
+- Windows 10 22H2 / 11 x64 与 Apple Silicon Mac 可部署；其他平台、内存或磁盘不足时禁用部署，运行时版本过旧时提示更新。
+- Windows 自动显示真实 CPU、系统内存、显卡与独立显存；无可靠显存读数显示未知，不将 RAM 和 VRAM 相加。
+- 在 Windows CI 检查真实 CMD 启动器、CIM/系统检测、HTTP 配对和撤销；不把云端 runner 当作桌面 GPU 真机。
 - 部署前明确显示下载大小及上下文，需要环境安装和模型切换时单独取得同意。
 - 下载、校验、启动、失败与日志来自真实助手；模拟推理测试必须明确标注，不当作真机证据。
 - 模型就绪后可流式聊天；停止生成、图片限制、拒绝远程图片 URL、断开连接清空聊天等行为正常。
@@ -35,8 +37,9 @@ npm run site:preview
 
 工作流 `.github/workflows/website.yml`：
 
-- `pull_request` 和 `main` 的 `push`：测试、构建、提供名为 `website` 的 artifact，不自动发布。
-- `workflow_dispatch`：选择 `main` 并勾选 `deploy` 才会发布。
+- `pull_request` 和 `main` 的 `push`：Linux 测试/构建，提供名为 `website` 的 artifact，并运行 Windows 检测、启动器和运行时安全检查；不自动发布。
+- Windows job 使用 Node.js 24、Python 3；只执行 Windows 专项测试，不下载真实模型或启动假装真实的推理。
+- `workflow_dispatch`：选择 `main` 并勾选 `deploy`，且 Linux、Windows 两项 job 通过才发布。
 - 普通构建只读仓库；仅发布 job 具有 Pages 和 OIDC 权限。
 
 步骤：
@@ -69,9 +72,9 @@ Vite 使用相对 base，适用于根路径与子目录。**换域名时必须�
 
 助手只绑定 `127.0.0.1:31415`，检测和本机操作需要配对后的短期令牌。网页向本机而非服务器发送硬件请求和聊天，默认访问网页不连接本机，只有用户发起连接、打开助手配对链接或恢复已保存的有效会话时才连接。
 
-HTTPS 公网页访问 loopback 受浏览器本地网络访问策略限制。建议最新版 Chrome / Edge，首次按提示授权；不能承诺 Safari、所有浏览器版本或组织管理策略均可用。不要移除安全保护来实现连接。遇到阻断可使用原本地运行包的 localhost:3000 网页作为另一条路径。
+HTTPS 公网页访问 loopback 受浏览器本地网络访问策略限制。建议最新版 Chrome / Edge，首次按提示授权；不能承诺所有浏览器或组织管理策略均可用。不要移除安全保护。Mac 遇到阻断可用原本地运行包的 localhost:3000 网页；原包不是 Windows 的替代路径。
 
-当前助手不是签名、公证的独立 Mac App，首次系统提示与 Node.js 安装仍需用户操作。真实 Mac 验证必须包括首次打开、权限提示、配对、实际模型下载及推理，不可仅凭 Linux HTTP 测试宣布完成。
+助手是源码运行包，不是已签名的 Windows 安装程序或公证的 Mac App。Windows SmartScreen/Defender、Mac Gatekeeper 和 Node.js 安装仍需用户按系统策略操作。真机验证应包括首次打开、权限、配对、实际模型下载与 CPU/GPU 推理；Windows runner 的 CMD/CIM 检查和 Linux HTTP 测试都不能替代桌面 GPU 实测。
 
 ## 数据维护
 

@@ -61,8 +61,8 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     const entries = JSON.parse(stdout) as {name: string; mode: number; date: number[]}[];
     const names = entries.map(e => e.name.replace("CanIRunAI-Helper/", ""));
     assert.deepEqual(names.sort(), [
-      "Start CanIRunAI Helper.command", "docs/HELPER.md", "scripts/helper.ts",
-      "apps/bridge/server.ts", "apps/bridge/hardware.ts", "apps/bridge/manager.ts", "apps/bridge/runtime.ts", "apps/bridge/chat.ts",
+      "Start CanIRunAI Helper.command", "Start CanIRunAI Helper.cmd", "docs/HELPER.md", "scripts/helper.ts",
+      "apps/bridge/server.ts", "apps/bridge/hardware.ts", "apps/bridge/windows-hardware.ts", "apps/bridge/runtime-archive.ts", "apps/bridge/manager.ts", "apps/bridge/runtime.ts", "apps/bridge/chat.ts",
       "packages/protocol/index.ts", "packages/model-registry/index.ts", "packages/model-registry/models.json",
       "packages/runtime-registry/index.ts", "packages/compatibility-engine/index.ts", "package.json", "package-lock.json",
     ].sort());

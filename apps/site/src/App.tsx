@@ -382,12 +382,12 @@ const faqs = [
     "不保证。适配基于权重、KV 缓存、运行开销和系统预留内存估算；连接后助手还会检查实际运行时版本及模型校验值。其他应用、上下文长度和上游变更会影响结果。综合排序不是公开质量跑分，也不提供未经测量的生成速度。",
   ],
   [
-    "Windows、Linux 和 Intel Mac 可以用吗？",
-    "可以浏览模型目录，助手协议也会明确返回实际平台，但当前模型部署和运行环境安装只支持 Apple Silicon Mac。其他平台不会被伪装为 Mac 或获得虚假的部署成功状态。",
+    "支持哪些 Windows 设备？显卡会自动检测吗？",
+    "支持 Windows 10 22H2 / Windows 11 x64，以及 Apple Silicon Mac。配对后自动检测 CPU、内存、磁盘和显卡；NVIDIA 显存由驱动工具读取，其他显卡无法可靠读取时显示未知。Windows 按系统内存保守推荐，GPU 加速取决于 Ollama 和驱动，不承诺特定速度。Windows ARM、32 位、旧版 Windows、Linux 和 Intel Mac 暂不支持部署。",
   ],
   [
     "浏览器连不上本地助手怎么办？",
-    "保持助手终端运行，使用本页下载的新版助手，并允许浏览器访问本地网络。建议使用最新版 Chrome 或 Edge；浏览器策略因版本和设备管理设置而异。不要关闭安全保护。也可以使用原本地应用在 localhost:3000 打开其本地网页。",
+    "保持助手终端运行，使用本页下载的新版助手，并允许浏览器访问本地网络。建议使用最新版 Chrome 或 Edge；浏览器策略因版本和设备管理设置而异。不要关闭安全保护。Mac 用户也可使用原本地应用在 localhost:3000 打开其本地网页，原运行包不支持 Windows。",
   ],
   [
     "模型目录是最新的吗？",
@@ -456,7 +456,7 @@ export default function App() {
     window.location.href,
     detected
       ? {
-          platform: detected.supported ? "apple" : "unsupported",
+          platform: !detected.supported ? "unsupported" : detected.os === "win32" ? "windows" : "apple",
           memoryGB: detected.memoryGB,
           freeMemoryGB: detected.freeMemoryGB,
           diskFreeGB: detected.diskFreeGB,
@@ -513,16 +513,16 @@ export default function App() {
         <section className="hero container" aria-labelledby="hero-title">
           <div className="hero-copy">
             <span className="intro-pill">
-              <span className="live-dot" /> 为 Apple Silicon 而生{" "}
+              <span className="live-dot" /> Windows / Apple Silicon{" "}
               <span className="pill-separator">/</span> 网页版
             </span>
             <h1 id="hero-title">
-              你的 Mac，
+              你的电脑，
               <br />
               能跑<span className="highlight">多聪明的 AI</span>？
             </h1>
             <p className="hero-description">
-              首次配对助手，自动识别你的 Mac。
+              首次配对助手，自动识别你的电脑。
               <br className="desktop-break" />
               从选模型、一键部署，到真正的本地对话。
             </p>
@@ -614,8 +614,9 @@ export default function App() {
                         }
                       >
                         <option value="apple">Apple Silicon Mac</option>
+                        <option value="windows">Windows 10 22H2 / 11 x64</option>
                         <option value="unsupported">
-                          Intel Mac / Windows / Linux
+                          Intel Mac / Linux / 其他平台
                         </option>
                       </select>
                       <ChevronDown size={15} />
@@ -624,7 +625,7 @@ export default function App() {
                       className="field-label memory-label"
                       htmlFor="memory"
                     >
-                      统一内存 <span>苹果菜单 → 关于本机</span>
+                      系统内存 <span>示例值，连接助手即可自动读取</span>
                     </label>
                     <div
                       className="memory-options"
@@ -648,7 +649,7 @@ export default function App() {
                       ))}
                       <select
                         id="memory"
-                        aria-label="统一内存（全部配置）"
+                        aria-label="系统内存（全部配置）"
                         value={config.memoryGB}
                         onChange={(e) =>
                           setConfig({
@@ -717,11 +718,11 @@ export default function App() {
                     </details>
                   </div>
                   <div
-                    className={`device-result ${config.platform !== "apple" ? "device-unsupported" : ""}`}
+                    className={`device-result ${config.platform === "unsupported" ? "device-unsupported" : ""}`}
                     aria-live="polite"
                   >
                     <span className="result-icon">
-                      {config.platform === "apple" ? (
+                      {config.platform !== "unsupported" ? (
                         <Check size={18} />
                       ) : (
                         <Info size={18} />
@@ -729,12 +730,12 @@ export default function App() {
                     </span>
                     <div>
                       <strong>
-                        {config.platform === "apple"
-                          ? `${compatible} 个模型，值得在你的 Mac 上试试`
+                        {config.platform !== "unsupported"
+                          ? `${compatible} 个模型，值得在你的电脑 上试试`
                           : "此平台暂不支持适配评估"}
                       </strong>
                       <p>
-                        {config.platform === "apple"
+                        {config.platform !== "unsupported"
                           ? "基于内存与磁盘估算，非本机实测"
                           : "仍可浏览模型，不能据此判断兼容性"}
                       </p>
@@ -766,7 +767,7 @@ export default function App() {
               <div>
                 <p className="eyebrow">FIND YOUR LOCAL INTELLIGENCE</p>
                 <h2 id="models-title">
-                  给你的 Mac，找个好搭档<span className="title-dot">.</span>
+                  给你的电脑，找个好搭档<span className="title-dot">.</span>
                 </h2>
                 <p>从日常灵感到专注编程，总有一个模型适合你。</p>
               </div>
@@ -827,7 +828,7 @@ export default function App() {
                   ·{" "}
                   {detected
                     ? `${detected.memoryGB.toFixed(0)} GB · 助手实机检测`
-                    : config.platform === "apple"
+                    : config.platform !== "unsupported"
                       ? `${config.memoryGB} GB · 手动示例配置`
                       : "手动配置，当前平台未评估"}
                 </span>
@@ -916,7 +917,8 @@ export default function App() {
               </div>
               <h3>首次启动助手</h3>
               <p>
-                在 Apple Silicon Mac 安装 Node.js 24，下载并解压新版助手，双击{" "}
+                安装 Node.js 24，下载并解压新版助手。Windows 双击{" "}
+                <code>Start CanIRunAI Helper.cmd</code>，Mac 双击{" "}
                 <code>Start CanIRunAI Helper.command</code>。保持终端运行。
               </p>
             </article>
@@ -946,9 +948,9 @@ export default function App() {
             <LockKeyhole size={20} />
             <p>
               <strong>首次安装授权，之后由本机助手执行。</strong>{" "}
-              网页不会静默安装本机软件。若浏览器不允许连接助手，也可使用{" "}
+              网页不会静默安装本机软件。Mac 用户若无法连接，也可使用{" "}
               <a href={download}>原本地应用运行包</a>{" "}
-              在本地网页操作；旧包不适用于本页配对。
+              在本地网页操作；旧包不适用于 Windows 或本页配对。
             </p>
             <a
               href={`${repository}/blob/main/README.md`}
@@ -998,7 +1000,7 @@ export default function App() {
         </div>
         <div className="container footer-note">
           <span>为本地 AI 探索者而做。</span>
-          <span>Apple Silicon · Ollama · 在你的电脑上</span>
+          <span>Windows / Apple Silicon · Ollama · 在你的电脑上</span>
         </div>
       </footer>
       {deployEntry && (
