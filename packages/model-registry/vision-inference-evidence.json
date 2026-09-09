@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-08T10:33:54.712Z",
+  "model": "qwen3.5-0.8b",
+  "digest": "f3817196d142eaf72ce79dfebe53dcb20bd21da87ce13e138a8f8e10a866b3a4",
+  "transport": "HTTP Bridge to real isolated local Ollama on port 11435",
+  "fixture": "256x256 red square PNG",
+  "streaming": true,
+  "result": "passed",
+  "answer": "红色"
+}

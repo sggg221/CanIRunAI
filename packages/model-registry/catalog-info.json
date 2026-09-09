@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "verifiedAt": "2026-09-08T10:29:00.959Z",
+  "modelCount": 27,
+  "familyCount": 15,
+  "source": "https://ollama.com/library?sort=newest",
+  "scope": "精选本地模型；不等同于官方全量目录",
+  "excluded": [
+    {
+      "name": "qwen3.8-flash-next",
+      "reason": "实验预览；GGUF 约 120GB，暂未纳入本版部署支持"
+    },
+    {
+      "name": "云端专用与无本地权重模型",
+      "reason": "本应用仅提供本机推理"
+    }
+  ]
+}

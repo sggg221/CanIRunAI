@@ -1,0 +1,480 @@
+[
+  {
+    "id": "qwen3-0.6b",
+    "name": "Qwen 3 Mini",
+    "developer": "Qwen",
+    "family": "qwen3",
+    "category": "Fastest",
+    "description": "A small, speedy companion for everyday questions.",
+    "releaseDate": "2025-04-29",
+    "quality": 68,
+    "tag": "qwen3:0.6b",
+    "capabilities": [
+      "chat",
+      "reasoning"
+    ],
+    "activeParameters": 0.6,
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "qwen3-1.7b",
+    "name": "Qwen 3 Light",
+    "developer": "Qwen",
+    "family": "qwen3",
+    "category": "Everyday",
+    "description": "A little more thinking power, with a tiny footprint.",
+    "releaseDate": "2025-04-29",
+    "quality": 73,
+    "tag": "qwen3:1.7b",
+    "capabilities": [
+      "chat",
+      "reasoning"
+    ],
+    "activeParameters": 1.7,
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "qwen3-4b",
+    "name": "Qwen 3",
+    "developer": "Qwen",
+    "family": "qwen3",
+    "category": "Best overall",
+    "description": "Write, explore, and think things through together.",
+    "releaseDate": "2025-04-29",
+    "quality": 85,
+    "tag": "qwen3:4b",
+    "capabilities": [
+      "chat",
+      "reasoning"
+    ],
+    "activeParameters": 4,
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "qwen3-8b",
+    "name": "Qwen 3 Plus",
+    "developer": "Qwen",
+    "family": "qwen3",
+    "category": "Reasoning",
+    "description": "More room for complex ideas and deeper reasoning.",
+    "releaseDate": "2025-04-29",
+    "quality": 89,
+    "tag": "qwen3:8b",
+    "capabilities": [
+      "chat",
+      "reasoning"
+    ],
+    "activeParameters": 8,
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "qwen2.5-coder-7b",
+    "name": "Qwen Coder",
+    "developer": "Qwen",
+    "family": "qwen2.5-coder",
+    "category": "Coding",
+    "description": "Your companion from first idea to working code.",
+    "releaseDate": "2024-11-12",
+    "quality": 87,
+    "tag": "qwen2.5-coder:7b",
+    "capabilities": [
+      "chat",
+      "coding"
+    ],
+    "activeParameters": 7,
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "gemma3-4b",
+    "name": "Gemma 3",
+    "developer": "Google",
+    "family": "gemma3",
+    "category": "Vision",
+    "description": "A fresh perspective on words and images.",
+    "releaseDate": "2025-03-12",
+    "quality": 83,
+    "tag": "gemma3:4b",
+    "capabilities": [
+      "chat",
+      "vision"
+    ],
+    "activeParameters": 4,
+    "license": "Gemma terms"
+  },
+  {
+    "id": "qwen3.5-0.8b",
+    "name": "Qwen 3.5 Mini",
+    "developer": "Qwen",
+    "family": "qwen3.5",
+    "category": "Fastest",
+    "description": "轻量级多模态助手，适合日常对话和看图。",
+    "releaseDate": null,
+    "quality": 79,
+    "tag": "qwen3.5:0.8b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3.5-2b",
+    "name": "Qwen 3.5 Light",
+    "developer": "Qwen",
+    "family": "qwen3.5",
+    "category": "Everyday",
+    "description": "兼顾中文交流、图文理解和轻量推理。",
+    "releaseDate": null,
+    "quality": 85,
+    "tag": "qwen3.5:2b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3.5-4b",
+    "name": "Qwen 3.5",
+    "developer": "Qwen",
+    "family": "qwen3.5",
+    "category": "Best overall",
+    "description": "新一代图文助手，适合写作、分析与日常编程。",
+    "releaseDate": null,
+    "quality": 92,
+    "tag": "qwen3.5:4b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3.5-9b",
+    "name": "Qwen 3.5 Plus",
+    "developer": "Qwen",
+    "family": "qwen3.5",
+    "category": "Reasoning",
+    "description": "面向更复杂的推理、代码和视觉任务。",
+    "releaseDate": null,
+    "quality": 94,
+    "tag": "qwen3.5:9b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "gemma4-e2b",
+    "name": "Gemma 4 E2B",
+    "developer": "Google",
+    "family": "gemma4",
+    "category": "Vision",
+    "description": "Google 新一代多模态模型；实际下载与内存高于 E2B 标签。",
+    "releaseDate": null,
+    "quality": 87,
+    "tag": "gemma4:e2b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "gemma4-e4b",
+    "name": "Gemma 4 E4B",
+    "developer": "Google",
+    "family": "gemma4",
+    "category": "Vision",
+    "description": "更强的多模态理解，适合内存充裕的电脑。",
+    "releaseDate": null,
+    "quality": 91,
+    "tag": "gemma4:e4b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "gemma4-12b",
+    "name": "Gemma 4 12B",
+    "developer": "Google",
+    "family": "gemma4",
+    "category": "Vision",
+    "description": "面向复杂图文理解与推理的工作站级模型。",
+    "releaseDate": null,
+    "quality": 94,
+    "tag": "gemma4:12b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "granite4.2-3b",
+    "name": "Granite 4.2 3B",
+    "developer": "IBM",
+    "family": "granite4.2",
+    "category": "Coding",
+    "description": "近期更新的轻量模型，适合代码、问答和结构化内容。",
+    "releaseDate": null,
+    "quality": 86,
+    "tag": "granite4.2:3b",
+    "capabilities": [
+      "chat",
+      "coding",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "granite4.2-8b",
+    "name": "Granite 4.2 8B",
+    "developer": "IBM",
+    "family": "granite4.2",
+    "category": "Reasoning",
+    "description": "适合多语言问答、内容提取与复杂推理。",
+    "releaseDate": null,
+    "quality": 90,
+    "tag": "granite4.2:8b",
+    "capabilities": [
+      "chat",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3.8-27b",
+    "name": "Qwen 3.8 27B",
+    "developer": "Qwen",
+    "family": "qwen3.8",
+    "category": "Coding",
+    "description": "近期更新的图文和编程模型，需要较大内存。",
+    "releaseDate": null,
+    "quality": 97,
+    "tag": "qwen3.8:27b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "coding",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3.6-27b",
+    "name": "Qwen 3.6 27B",
+    "developer": "Qwen",
+    "family": "qwen3.6",
+    "category": "Coding",
+    "description": "长上下文编程与图文分析，面向大内存设备。",
+    "releaseDate": null,
+    "quality": 95,
+    "tag": "qwen3.6:27b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "coding",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3.6-35b",
+    "name": "Qwen 3.6 35B A3B",
+    "developer": "Qwen",
+    "family": "qwen3.6",
+    "category": "Coding",
+    "description": "稀疏专家编程模型；全部权重仍需载入内存。",
+    "releaseDate": null,
+    "quality": 96,
+    "tag": "qwen3.6:35b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "coding",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "minicpm-v4.6-1b",
+    "name": "MiniCPM-V 4.6",
+    "developer": "OpenBMB",
+    "family": "minicpm-v4.6",
+    "category": "Vision",
+    "description": "小体积视觉模型，适合图片理解和截图问答。",
+    "releaseDate": null,
+    "quality": 83,
+    "tag": "minicpm-v4.6:1b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "ministral-3-3b",
+    "name": "Ministral 3 3B",
+    "developer": "Mistral AI",
+    "family": "ministral-3",
+    "category": "Everyday",
+    "description": "为本地设备设计的紧凑图文助手。",
+    "releaseDate": null,
+    "quality": 86,
+    "tag": "ministral-3:3b",
+    "capabilities": [
+      "chat",
+      "vision"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "ministral-3-8b",
+    "name": "Ministral 3 8B",
+    "developer": "Mistral AI",
+    "family": "ministral-3",
+    "category": "Vision",
+    "description": "兼顾视觉、文字理解与本地执行效率。",
+    "releaseDate": null,
+    "quality": 90,
+    "tag": "ministral-3:8b",
+    "capabilities": [
+      "chat",
+      "vision"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "lfm2.5-8b",
+    "name": "LFM 2.5 8B A1B",
+    "developer": "Liquid AI",
+    "family": "lfm2.5",
+    "category": "Everyday",
+    "description": "混合专家架构，面向设备端文本与结构化任务。",
+    "releaseDate": null,
+    "quality": 85,
+    "tag": "lfm2.5:8b",
+    "capabilities": [
+      "chat",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "ornith-1.5-9b",
+    "name": "Ornith 1.5 9B",
+    "developer": "Ornith",
+    "family": "ornith-1.5",
+    "category": "Coding",
+    "description": "近期更新的图文与代码模型，适合本地开发任务。",
+    "releaseDate": null,
+    "quality": 91,
+    "tag": "ornith-1.5:9b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "coding",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3-vl-2b",
+    "name": "Qwen 3 VL 2B",
+    "developer": "Qwen",
+    "family": "qwen3-vl",
+    "category": "Vision",
+    "description": "轻量视觉模型，适合截图、照片和中文图文问答。",
+    "releaseDate": null,
+    "quality": 83,
+    "tag": "qwen3-vl:2b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3-vl-4b",
+    "name": "Qwen 3 VL 4B",
+    "developer": "Qwen",
+    "family": "qwen3-vl",
+    "category": "Vision",
+    "description": "更细致的图像理解与图文推理。",
+    "releaseDate": null,
+    "quality": 87,
+    "tag": "qwen3-vl:4b",
+    "capabilities": [
+      "chat",
+      "vision",
+      "reasoning"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3-coder-30b",
+    "name": "Qwen 3 Coder 30B A3B",
+    "developer": "Qwen",
+    "family": "qwen3-coder",
+    "category": "Coding",
+    "description": "专为代码任务设计的专家模型，需要足够内存。",
+    "releaseDate": null,
+    "quality": 94,
+    "tag": "qwen3-coder:30b",
+    "capabilities": [
+      "chat",
+      "coding"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  },
+  {
+    "id": "qwen3-coder-next-q4_k_m",
+    "name": "Qwen 3 Coder Next",
+    "developer": "Qwen",
+    "family": "qwen3-coder-next",
+    "category": "Coding",
+    "description": "面向大型代码库的编程模型，约 52GB 下载。",
+    "releaseDate": null,
+    "quality": 96,
+    "tag": "qwen3-coder-next:q4_K_M",
+    "capabilities": [
+      "chat",
+      "coding"
+    ],
+    "activeParameters": null,
+    "license": "来源许可证"
+  }
+]

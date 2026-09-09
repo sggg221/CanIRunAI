@@ -1,0 +1,27 @@
+{
+  "name": "canirunai",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "site:dev": "npm --prefix apps/site run dev",
+    "site:build": "npm --prefix apps/site run build",
+    "site:preview": "npm --prefix apps/site run preview",
+    "dev": "node --import tsx scripts/dev.ts",
+    "bridge": "node --import tsx apps/bridge/server.ts",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "check": "tsc --noEmit",
+    "build": "npm run check && npm --prefix apps/web run build",
+    "registry:refresh": "node scripts/refresh-registry.mjs",
+    "start": "node --import tsx scripts/dev.ts --production"
+  },
+  "dependencies": {
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "fake-indexeddb": "^6.2.5",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.3"
+  }
+}

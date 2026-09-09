@@ -1,0 +1,2836 @@
+[
+  {
+    "id": "qwen3-0.6b",
+    "tag": "qwen3:0.6b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen3",
+      "model_families": [
+        "qwen3"
+      ],
+      "model_type": "751.63M",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:7f4030143c1c477224c5434f8272c662a8b042079a0a584f0a27a1684fe2e1fa",
+          "sha256:eb4402837c7829a690fa845de4d7f3fd842c2adee476d5341da8a46ea9255175",
+          "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "sha256:cff3f395ef3756ab63e58b0ad1b32bb6f802905cae1472e6a12034e4246fbbdb"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen3",
+      "general.type": "model",
+      "general.name": "Qwen3 0.6B",
+      "general.basename": "Qwen3",
+      "general.size_label": "0.6B",
+      "general.license": "apache-2.0",
+      "qwen3.block_count": 28,
+      "qwen3.context_length": 40960,
+      "qwen3.embedding_length": 1024,
+      "qwen3.feed_forward_length": 3072,
+      "qwen3.attention.head_count": 16,
+      "qwen3.attention.head_count_kv": 8,
+      "qwen3.rope.freq_base": 1000000,
+      "qwen3.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen3.attention.key_length": 128,
+      "qwen3.attention.value_length": 128
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:b0830f4ff6a0220cfd995455206353b0ed23c0aee865218b154b7a75087b4e55",
+        "size": 490
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:7f4030143c1c477224c5434f8272c662a8b042079a0a584f0a27a1684fe2e1fa",
+          "size": 522640096
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.template",
+          "digest": "sha256:ae370d884f108d16e7cc8fd5259ebc5773a0afa6e078b11f4ed7e39a27e0dfc4",
+          "size": 1723
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "size": 11338
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:cff3f395ef3756ab63e58b0ad1b32bb6f802905cae1472e6a12034e4246fbbdb",
+          "size": 120
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3-4b",
+    "tag": "qwen3:4b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen3",
+      "model_families": [
+        "qwen3"
+      ],
+      "model_type": "4.0B",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:3e4cb14174460404e7a233e531675303b2fbf7749c02f91864fe311ab6344e4f",
+          "sha256:53e4ea15e8f5f17f5052c5ef6aef5f79b4266708c93e7c893dbe4b3e211a815d",
+          "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "sha256:cff3f395ef3756ab63e58b0ad1b32bb6f802905cae1472e6a12034e4246fbbdb"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen3",
+      "general.basename": "Qwen3",
+      "general.file_type": 15,
+      "general.finetune": "Thinking",
+      "general.license": "apache-2.0",
+      "general.license.link": "https://huggingface.co/Qwen/Qwen3-4B-Thinking-2507/blob/main/LICENSE",
+      "general.name": "Qwen3 4B Thinking 2507",
+      "general.parameter_count": 4022468096,
+      "general.quantization_version": 2,
+      "general.size_label": "4B",
+      "general.tags": [
+        "text-generation"
+      ],
+      "general.type": "model",
+      "general.version": "2507",
+      "qwen3.attention.head_count": 32,
+      "qwen3.attention.head_count_kv": 8,
+      "qwen3.attention.key_length": 128,
+      "qwen3.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen3.attention.value_length": 128,
+      "qwen3.block_count": 36,
+      "qwen3.context_length": 262144,
+      "qwen3.embedding_length": 2560,
+      "qwen3.feed_forward_length": 9728,
+      "qwen3.rope.freq_base": 5000000
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:e18a783aae5525fd2852fc94c985541a77e791e034abc2d3056474d59de336fc",
+        "size": 487
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:3e4cb14174460404e7a233e531675303b2fbf7749c02f91864fe311ab6344e4f",
+          "size": 2497280480
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.template",
+          "digest": "sha256:2d54db2b9bb29ce7db54fea63a891f5859603813c555b1f88b5e0994652897f9",
+          "size": 1506
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "size": 11338
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:cff3f395ef3756ab63e58b0ad1b32bb6f802905cae1472e6a12034e4246fbbdb",
+          "size": 120
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3-1.7b",
+    "tag": "qwen3:1.7b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen3",
+      "model_families": [
+        "qwen3"
+      ],
+      "model_type": "2.0B",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:3d0b790534fe4b79525fc3692950408dca41171676ed7e21db57af5c65ef6ab6",
+          "sha256:eb4402837c7829a690fa845de4d7f3fd842c2adee476d5341da8a46ea9255175",
+          "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "sha256:cff3f395ef3756ab63e58b0ad1b32bb6f802905cae1472e6a12034e4246fbbdb"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen3",
+      "general.type": "model",
+      "general.name": "Qwen3 1.7B",
+      "general.basename": "Qwen3",
+      "general.size_label": "1.7B",
+      "qwen3.block_count": 28,
+      "qwen3.context_length": 40960,
+      "qwen3.embedding_length": 2048,
+      "qwen3.feed_forward_length": 6144,
+      "qwen3.attention.head_count": 16,
+      "qwen3.attention.head_count_kv": 8,
+      "qwen3.rope.freq_base": 1000000,
+      "qwen3.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen3.attention.key_length": 128,
+      "qwen3.attention.value_length": 128
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:517ccaff02fe9f99718ab2f478e611aa2813c36263eeed86c2427bc122d14ad8",
+        "size": 487
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:3d0b790534fe4b79525fc3692950408dca41171676ed7e21db57af5c65ef6ab6",
+          "size": 1359279776
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.template",
+          "digest": "sha256:ae370d884f108d16e7cc8fd5259ebc5773a0afa6e078b11f4ed7e39a27e0dfc4",
+          "size": 1723
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "size": 11338
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:cff3f395ef3756ab63e58b0ad1b32bb6f802905cae1472e6a12034e4246fbbdb",
+          "size": 120
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3-8b",
+    "tag": "qwen3:8b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen3",
+      "model_families": [
+        "qwen3"
+      ],
+      "model_type": "8.2B",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:a3de86cd1c132c822487ededd47a324c50491393e6565cd14bafa40d0b8e686f",
+          "sha256:eb4402837c7829a690fa845de4d7f3fd842c2adee476d5341da8a46ea9255175",
+          "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "sha256:cff3f395ef3756ab63e58b0ad1b32bb6f802905cae1472e6a12034e4246fbbdb"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen3",
+      "general.type": "model",
+      "general.name": "Qwen3 8B",
+      "general.basename": "Qwen3",
+      "general.size_label": "8B",
+      "general.license": "apache-2.0",
+      "qwen3.block_count": 36,
+      "qwen3.context_length": 40960,
+      "qwen3.embedding_length": 4096,
+      "qwen3.feed_forward_length": 12288,
+      "qwen3.attention.head_count": 32,
+      "qwen3.attention.head_count_kv": 8,
+      "qwen3.rope.freq_base": 1000000,
+      "qwen3.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen3.attention.key_length": 128,
+      "qwen3.attention.value_length": 128
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:05a61d37b08453e59290add468e3bb2f688e23a01e967fecb0e2fa41218cea76",
+        "size": 487
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:a3de86cd1c132c822487ededd47a324c50491393e6565cd14bafa40d0b8e686f",
+          "size": 5225374496
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.template",
+          "digest": "sha256:ae370d884f108d16e7cc8fd5259ebc5773a0afa6e078b11f4ed7e39a27e0dfc4",
+          "size": 1723
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "size": 11338
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:cff3f395ef3756ab63e58b0ad1b32bb6f802905cae1472e6a12034e4246fbbdb",
+          "size": 120
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen2.5-coder-7b",
+    "tag": "qwen2.5-coder:7b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen2",
+      "model_families": [
+        "qwen2"
+      ],
+      "model_type": "7.6B",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:60e05f2100071479f596b964f89f510f057ce397ea22f2833a0cfe029bfc2463",
+          "sha256:66b9ea09bd5b7099cbb4fc820f31b575c0366fa439b08245566692c6784e281e",
+          "sha256:e94a8ecb9327ded799604a2e478659bc759230fe316c50d686358f932f52776c",
+          "sha256:832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen2",
+      "general.type": "model",
+      "general.name": "Qwen2.5 Coder 7B Instruct",
+      "general.finetune": "Instruct",
+      "general.basename": "Qwen2.5-Coder",
+      "general.size_label": "7B",
+      "general.license": "apache-2.0",
+      "general.license.link": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct/blob/main/LICENSE",
+      "general.base_model.count": 1,
+      "general.base_model.0.name": "Qwen2.5 Coder 7B",
+      "general.base_model.0.organization": "Qwen",
+      "general.base_model.0.repo_url": "https://huggingface.co/Qwen/Qwen2.5-Coder-7B",
+      "general.tags": [
+        "code",
+        "codeqwen",
+        "chat",
+        "qwen",
+        "qwen-coder",
+        "text-generation"
+      ],
+      "general.languages": [
+        "en"
+      ],
+      "qwen2.block_count": 28,
+      "qwen2.context_length": 32768,
+      "qwen2.embedding_length": 3584,
+      "qwen2.feed_forward_length": 18944,
+      "qwen2.attention.head_count": 28,
+      "qwen2.attention.head_count_kv": 4,
+      "qwen2.rope.freq_base": 1000000,
+      "qwen2.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "general.file_type": 15
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:d9bb33f2786931fea42f50936a2424818aa2f14500638af2f01861eb2c8fb446",
+        "size": 487
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:60e05f2100071479f596b964f89f510f057ce397ea22f2833a0cfe029bfc2463",
+          "size": 4683074048
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.system",
+          "digest": "sha256:66b9ea09bd5b7099cbb4fc820f31b575c0366fa439b08245566692c6784e281e",
+          "size": 68
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.template",
+          "digest": "sha256:1e65450c30670713aa47fe23e8b9662bdf4065e81cc8e3cbfaa98924fcc0d320",
+          "size": 1615
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+          "size": 11343
+        }
+      ]
+    }
+  },
+  {
+    "id": "gemma3-4b",
+    "tag": "gemma3:4b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "gemma3",
+      "model_families": [
+        "gemma3"
+      ],
+      "model_type": "4.3B",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:aeda25e63ebd698fab8638ffb778e68bed908b960d39d0becc650fa981609d25",
+          "sha256:e0a42594d802e5d31cdc786deb4823edb8adff66094d49de8fffe976d753e348",
+          "sha256:dd084c7d92a3c1c14cc09ae77153b903fd2024b64a100a0cc8ec9316063d2dbc",
+          "sha256:3116c52250752e00dd06b16382e952bd33c34fd79fc4fe3a5d2c77cf7de1b14b"
+        ]
+      }
+    },
+    "metadata": {
+      "gemma3.attention.head_count": 8,
+      "gemma3.attention.head_count_kv": 4,
+      "gemma3.attention.key_length": 256,
+      "gemma3.attention.sliding_window": 1024,
+      "gemma3.attention.value_length": 256,
+      "gemma3.block_count": 34,
+      "gemma3.context_length": 131072,
+      "gemma3.embedding_length": 2560,
+      "gemma3.feed_forward_length": 10240,
+      "gemma3.mm.tokens_per_image": 256,
+      "gemma3.vision.attention.head_count": 16,
+      "gemma3.vision.attention.layer_norm_epsilon": 9.999999974752427e-7,
+      "gemma3.vision.block_count": 27,
+      "gemma3.vision.embedding_length": 1152,
+      "gemma3.vision.feed_forward_length": 4304,
+      "gemma3.vision.image_size": 896,
+      "gemma3.vision.num_channels": 3,
+      "gemma3.vision.patch_size": 14,
+      "general.architecture": "gemma3"
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:b6ae5839783f2ba248e65e4b960ab15f9c4b7118db285827dba6cba9754759e2",
+        "size": 489
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:aeda25e63ebd698fab8638ffb778e68bed908b960d39d0becc650fa981609d25",
+          "size": 3338792448
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.template",
+          "digest": "sha256:e0a42594d802e5d31cdc786deb4823edb8adff66094d49de8fffe976d753e348",
+          "size": 358
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:dd084c7d92a3c1c14cc09ae77153b903fd2024b64a100a0cc8ec9316063d2dbc",
+          "size": 8432
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:3116c52250752e00dd06b16382e952bd33c34fd79fc4fe3a5d2c77cf7de1b14b",
+          "size": 77
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3.5-4b",
+    "tag": "qwen3.5:4b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen35",
+      "model_families": [
+        "qwen35"
+      ],
+      "model_type": "4.7B",
+      "file_type": "Q4_K_M",
+      "renderer": "qwen3.5",
+      "parser": "qwen3.5",
+      "requires": "0.17.1",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:81fb60c7daa80fc1123380b98970b320ae233409f0f71a72ed7b9b0d62f40490",
+          "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen35",
+      "general.file_type": 15,
+      "general.parameter_count": 4659865088,
+      "general.quantization_version": 2,
+      "qwen35.attention.head_count": 16,
+      "qwen35.attention.head_count_kv": [
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4
+      ],
+      "qwen35.attention.key_length": 256,
+      "qwen35.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen35.attention.value_length": 256,
+      "qwen35.block_count": 32,
+      "qwen35.context_length": 262144,
+      "qwen35.embedding_length": 2560,
+      "qwen35.feed_forward_length": 9216,
+      "qwen35.full_attention_interval": 4,
+      "qwen35.image_token_id": 248056,
+      "qwen35.mrope_sections": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.rope.dimension_count": 64,
+      "qwen35.rope.dimension_sections": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.rope.freq_base": 10000000,
+      "qwen35.rope.mrope_interleaved": true,
+      "qwen35.rope.mrope_section": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.ssm.conv_kernel": 4,
+      "qwen35.ssm.group_count": 16,
+      "qwen35.ssm.inner_size": 4096,
+      "qwen35.ssm.state_size": 128,
+      "qwen35.ssm.time_step_rank": 32,
+      "qwen35.ssm.v_head_reordered": true,
+      "qwen35.vision.attention.head_count": 16,
+      "qwen35.vision.block_count": 24,
+      "qwen35.vision.deepstack_visual_indexes": [],
+      "qwen35.vision.embedding_length": 1024,
+      "qwen35.vision.image_mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen35.vision.image_std": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen35.vision.longest_edge": 16777216,
+      "qwen35.vision.num_channels": 3,
+      "qwen35.vision.patch_size": 16,
+      "qwen35.vision.shortest_edge": 65536,
+      "qwen35.vision.spatial_merge_size": 2,
+      "qwen35.vision.temporal_patch_size": 2,
+      "qwen35.vision_end_token_id": 248054,
+      "qwen35.vision_start_token_id": 248053
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:de9fed2251b37295b763727a59ca35cf5cfe5c7379bc3e2104b2ce3c145aa887",
+        "size": 475
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:81fb60c7daa80fc1123380b98970b320ae233409f0f71a72ed7b9b0d62f40490",
+          "size": 3389971840
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "size": 11355
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff",
+          "size": 65
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3.5-0.8b",
+    "tag": "qwen3.5:0.8b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen35",
+      "model_families": [
+        "qwen35"
+      ],
+      "model_type": "873.44M",
+      "file_type": "Q8_0",
+      "renderer": "qwen3.5",
+      "parser": "qwen3.5",
+      "requires": "0.17.1",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:afb707b6b8fac6e475acc42bc8380fc0b8d2e0e4190be5a969fbf62fcc897db5",
+          "sha256:9be69ef463066202c1b1bd299aaf42bad370a01ba4b40d293617859720776c17",
+          "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen35",
+      "general.file_type": 7,
+      "general.parameter_count": 873438784,
+      "general.quantization_version": 2,
+      "qwen35.attention.head_count": 8,
+      "qwen35.attention.head_count_kv": [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2
+      ],
+      "qwen35.attention.key_length": 256,
+      "qwen35.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen35.attention.value_length": 256,
+      "qwen35.block_count": 24,
+      "qwen35.context_length": 262144,
+      "qwen35.embedding_length": 1024,
+      "qwen35.feed_forward_length": 3584,
+      "qwen35.full_attention_interval": 4,
+      "qwen35.image_token_id": 248056,
+      "qwen35.mrope_sections": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.rope.dimension_count": 64,
+      "qwen35.rope.dimension_sections": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.rope.freq_base": 10000000,
+      "qwen35.rope.mrope_interleaved": true,
+      "qwen35.rope.mrope_section": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.ssm.conv_kernel": 4,
+      "qwen35.ssm.group_count": 16,
+      "qwen35.ssm.inner_size": 2048,
+      "qwen35.ssm.state_size": 128,
+      "qwen35.ssm.time_step_rank": 16,
+      "qwen35.ssm.v_head_reordered": true,
+      "qwen35.vision.attention.head_count": 12,
+      "qwen35.vision.block_count": 12,
+      "qwen35.vision.deepstack_visual_indexes": [],
+      "qwen35.vision.embedding_length": 768,
+      "qwen35.vision.image_mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen35.vision.image_std": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen35.vision.longest_edge": 16777216,
+      "qwen35.vision.num_channels": 3,
+      "qwen35.vision.patch_size": 16,
+      "qwen35.vision.shortest_edge": 65536,
+      "qwen35.vision.spatial_merge_size": 2,
+      "qwen35.vision.temporal_patch_size": 2,
+      "qwen35.vision_end_token_id": 248054,
+      "qwen35.vision_start_token_id": 248053
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:b14c6eab49f986e99b2daf9cedac5183c74d4f5ce2585ebb52b8492778adec39",
+        "size": 476
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:afb707b6b8fac6e475acc42bc8380fc0b8d2e0e4190be5a969fbf62fcc897db5",
+          "size": 1036034688
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:9be69ef463066202c1b1bd299aaf42bad370a01ba4b40d293617859720776c17",
+          "size": 11354
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff",
+          "size": 65
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3.5-2b",
+    "tag": "qwen3.5:2b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen35",
+      "model_families": [
+        "qwen35"
+      ],
+      "model_type": "2.3B",
+      "file_type": "Q8_0",
+      "renderer": "qwen3.5",
+      "parser": "qwen3.5",
+      "requires": "0.17.1",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:b709d81508a078a686961de6ca07a953b895d9b286c46e17f00fb267f4f2d297",
+          "sha256:9be69ef463066202c1b1bd299aaf42bad370a01ba4b40d293617859720776c17",
+          "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen35",
+      "general.file_type": 7,
+      "general.parameter_count": 2274069824,
+      "general.quantization_version": 2,
+      "qwen35.attention.head_count": 8,
+      "qwen35.attention.head_count_kv": [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2
+      ],
+      "qwen35.attention.key_length": 256,
+      "qwen35.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen35.attention.value_length": 256,
+      "qwen35.block_count": 24,
+      "qwen35.context_length": 262144,
+      "qwen35.embedding_length": 2048,
+      "qwen35.feed_forward_length": 6144,
+      "qwen35.full_attention_interval": 4,
+      "qwen35.image_token_id": 248056,
+      "qwen35.mrope_sections": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.rope.dimension_count": 64,
+      "qwen35.rope.dimension_sections": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.rope.freq_base": 10000000,
+      "qwen35.rope.mrope_interleaved": true,
+      "qwen35.rope.mrope_section": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.ssm.conv_kernel": 4,
+      "qwen35.ssm.group_count": 16,
+      "qwen35.ssm.inner_size": 2048,
+      "qwen35.ssm.state_size": 128,
+      "qwen35.ssm.time_step_rank": 16,
+      "qwen35.ssm.v_head_reordered": true,
+      "qwen35.vision.attention.head_count": 16,
+      "qwen35.vision.block_count": 24,
+      "qwen35.vision.deepstack_visual_indexes": [],
+      "qwen35.vision.embedding_length": 1024,
+      "qwen35.vision.image_mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen35.vision.image_std": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen35.vision.longest_edge": 16777216,
+      "qwen35.vision.num_channels": 3,
+      "qwen35.vision.patch_size": 16,
+      "qwen35.vision.shortest_edge": 65536,
+      "qwen35.vision.spatial_merge_size": 2,
+      "qwen35.vision.temporal_patch_size": 2,
+      "qwen35.vision_end_token_id": 248054,
+      "qwen35.vision_start_token_id": 248053
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:ee043a99abe5e8317272712ed08ee2993af1f7930d69aefa3eba562cdc2822bd",
+        "size": 473
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:b709d81508a078a686961de6ca07a953b895d9b286c46e17f00fb267f4f2d297",
+          "size": 2741180928
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:9be69ef463066202c1b1bd299aaf42bad370a01ba4b40d293617859720776c17",
+          "size": 11354
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff",
+          "size": 65
+        }
+      ]
+    }
+  },
+  {
+    "id": "gemma4-e2b",
+    "tag": "gemma4:e2b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "gemma4",
+      "model_families": [
+        "gemma4"
+      ],
+      "model_type": "5.1B",
+      "file_type": "Q4_K_M",
+      "renderer": "gemma4",
+      "parser": "gemma4",
+      "requires": "0.20.0",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:4e30e2665218745ef463f722c0bf86be0cab6ee676320f1cfadf91e989107448",
+          "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "sha256:56380ca2ab89f1f68c283f4d50863c0bcab52ae3f1b9a88e4ab5617b176f71a3"
+        ]
+      }
+    },
+    "metadata": {
+      "gemma4.attention.head_count": 8,
+      "gemma4.attention.head_count_kv": 1,
+      "gemma4.attention.key_length": 512,
+      "gemma4.attention.key_length_swa": 256,
+      "gemma4.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "gemma4.attention.shared_kv_layers": 20,
+      "gemma4.attention.sliding_window": 512,
+      "gemma4.attention.sliding_window_pattern": [
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "gemma4.attention.value_length": 512,
+      "gemma4.attention.value_length_swa": 256,
+      "gemma4.audio.attention.head_count": 8,
+      "gemma4.audio.attention.layer_norm_epsilon": 9.999999974752427e-7,
+      "gemma4.audio.block_count": 12,
+      "gemma4.audio.conv_kernel_size": 5,
+      "gemma4.audio.embedding_length": 1024,
+      "gemma4.audio.feed_forward_length": 4096,
+      "gemma4.block_count": 35,
+      "gemma4.context_length": 131072,
+      "gemma4.embedding_length": 1536,
+      "gemma4.embedding_length_per_layer_input": 256,
+      "gemma4.feed_forward_length": [
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        6144,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288,
+        12288
+      ],
+      "gemma4.final_logit_softcapping": 30,
+      "gemma4.rope.dimension_count": 512,
+      "gemma4.rope.dimension_count_swa": 256,
+      "gemma4.rope.freq_base": 1000000,
+      "gemma4.rope.freq_base_swa": 10000,
+      "gemma4.vision.attention.head_count": 12,
+      "gemma4.vision.attention.layer_norm_epsilon": 9.999999974752427e-7,
+      "gemma4.vision.block_count": 16,
+      "gemma4.vision.embedding_length": 768,
+      "gemma4.vision.feed_forward_length": 3072,
+      "gemma4.vision.num_channels": 3,
+      "gemma4.vision.patch_size": 16,
+      "gemma4.vision.projector.scale_factor": 3,
+      "general.architecture": "gemma4",
+      "general.file_type": 15,
+      "general.parameter_count": 5123179235,
+      "general.quantization_version": 2
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:c6bc3775a3fa9935ce4a3ccd7abc59e936c3de9308d2cc090516012f43ed9c07",
+        "size": 473
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:4e30e2665218745ef463f722c0bf86be0cab6ee676320f1cfadf91e989107448",
+          "size": 7162394016
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "size": 11355
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:56380ca2ab89f1f68c283f4d50863c0bcab52ae3f1b9a88e4ab5617b176f71a3",
+          "size": 42
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3.5-9b",
+    "tag": "qwen3.5:9b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen35",
+      "model_families": [
+        "qwen35"
+      ],
+      "model_type": "9.7B",
+      "file_type": "Q4_K_M",
+      "renderer": "qwen3.5",
+      "parser": "qwen3.5",
+      "requires": "0.17.1",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c",
+          "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen35",
+      "general.file_type": 15,
+      "general.parameter_count": 9653104368,
+      "general.quantization_version": 2,
+      "qwen35.attention.head_count": 16,
+      "qwen35.attention.head_count_kv": [
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4
+      ],
+      "qwen35.attention.key_length": 256,
+      "qwen35.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen35.attention.value_length": 256,
+      "qwen35.block_count": 32,
+      "qwen35.context_length": 262144,
+      "qwen35.embedding_length": 4096,
+      "qwen35.feed_forward_length": 12288,
+      "qwen35.full_attention_interval": 4,
+      "qwen35.image_token_id": 248056,
+      "qwen35.mrope_sections": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.rope.dimension_count": 64,
+      "qwen35.rope.dimension_sections": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.rope.freq_base": 10000000,
+      "qwen35.rope.mrope_interleaved": true,
+      "qwen35.rope.mrope_section": [
+        11,
+        11,
+        10
+      ],
+      "qwen35.ssm.conv_kernel": 4,
+      "qwen35.ssm.group_count": 16,
+      "qwen35.ssm.inner_size": 4096,
+      "qwen35.ssm.state_size": 128,
+      "qwen35.ssm.time_step_rank": 32,
+      "qwen35.ssm.v_head_reordered": true,
+      "qwen35.vision.attention.head_count": 16,
+      "qwen35.vision.block_count": 27,
+      "qwen35.vision.deepstack_visual_indexes": [],
+      "qwen35.vision.embedding_length": 1152,
+      "qwen35.vision.image_mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen35.vision.image_std": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen35.vision.longest_edge": 16777216,
+      "qwen35.vision.num_channels": 3,
+      "qwen35.vision.patch_size": 16,
+      "qwen35.vision.shortest_edge": 65536,
+      "qwen35.vision.spatial_merge_size": 2,
+      "qwen35.vision.temporal_patch_size": 2,
+      "qwen35.vision_end_token_id": 248054,
+      "qwen35.vision_start_token_id": 248053
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:be595b49fe22012bd1f5605ec14c7ffa58331783a88a4fd8c22e5fc8ec42cf9f",
+        "size": 475
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c",
+          "size": 6594462816
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "size": 11355
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff",
+          "size": 65
+        }
+      ]
+    }
+  },
+  {
+    "id": "gemma4-e4b",
+    "tag": "gemma4:e4b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "gemma4",
+      "model_families": [
+        "gemma4"
+      ],
+      "model_type": "8.0B",
+      "file_type": "Q4_K_M",
+      "renderer": "gemma4",
+      "parser": "gemma4",
+      "requires": "0.20.0",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:4c27e0f5b5adf02ac956c7322bd2ee7636fe3f45a8512c9aba5385242cb6e09a",
+          "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "sha256:56380ca2ab89f1f68c283f4d50863c0bcab52ae3f1b9a88e4ab5617b176f71a3"
+        ]
+      }
+    },
+    "metadata": {
+      "gemma4.attention.head_count": 8,
+      "gemma4.attention.head_count_kv": 2,
+      "gemma4.attention.key_length": 512,
+      "gemma4.attention.key_length_swa": 256,
+      "gemma4.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "gemma4.attention.shared_kv_layers": 18,
+      "gemma4.attention.sliding_window": 512,
+      "gemma4.attention.sliding_window_pattern": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "gemma4.attention.value_length": 512,
+      "gemma4.attention.value_length_swa": 256,
+      "gemma4.audio.attention.head_count": 8,
+      "gemma4.audio.attention.layer_norm_epsilon": 9.999999974752427e-7,
+      "gemma4.audio.block_count": 12,
+      "gemma4.audio.conv_kernel_size": 5,
+      "gemma4.audio.embedding_length": 1024,
+      "gemma4.audio.feed_forward_length": 4096,
+      "gemma4.block_count": 42,
+      "gemma4.context_length": 131072,
+      "gemma4.embedding_length": 2560,
+      "gemma4.embedding_length_per_layer_input": 256,
+      "gemma4.feed_forward_length": 10240,
+      "gemma4.final_logit_softcapping": 30,
+      "gemma4.rope.dimension_count": 512,
+      "gemma4.rope.dimension_count_swa": 256,
+      "gemma4.rope.freq_base": 1000000,
+      "gemma4.rope.freq_base_swa": 10000,
+      "gemma4.vision.attention.head_count": 12,
+      "gemma4.vision.attention.layer_norm_epsilon": 9.999999974752427e-7,
+      "gemma4.vision.block_count": 16,
+      "gemma4.vision.embedding_length": 768,
+      "gemma4.vision.feed_forward_length": 3072,
+      "gemma4.vision.num_channels": 3,
+      "gemma4.vision.patch_size": 16,
+      "gemma4.vision.projector.scale_factor": 3,
+      "general.architecture": "gemma4",
+      "general.file_type": 15,
+      "general.parameter_count": 7996157674,
+      "general.quantization_version": 2
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:f0988ff50a2458c598ff6b1b87b94d0f5c44d73061c2795391878b00b2285e11",
+        "size": 473
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:4c27e0f5b5adf02ac956c7322bd2ee7636fe3f45a8512c9aba5385242cb6e09a",
+          "size": 9608338848
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "size": 11355
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:56380ca2ab89f1f68c283f4d50863c0bcab52ae3f1b9a88e4ab5617b176f71a3",
+          "size": 42
+        }
+      ]
+    }
+  },
+  {
+    "id": "granite4.2-3b",
+    "tag": "granite4.2:3b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "granite",
+      "model_families": [
+        "granite"
+      ],
+      "model_type": "3.7B",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:20e436143017578687f7f848225cc6c6038126c84149192229c7dff6e4e0f427",
+          "sha256:58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+          "sha256:02897ca0d6a33881b1581b775af2884e9eed3ea9b7db8141e0dc0ef2e707fd18"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "granite",
+      "general.type": "model",
+      "general.sampling.top_p": 0.949999988079071,
+      "general.sampling.temp": 1,
+      "general.name": "Granite 4.2 3b",
+      "general.basename": "granite-4.2",
+      "general.size_label": "3B",
+      "general.license": "apache-2.0",
+      "general.base_model.count": 1,
+      "general.base_model.0.name": "Granite 4.1 3b Base",
+      "general.base_model.0.organization": "Ibm Granite",
+      "general.base_model.0.repo_url": "https://huggingface.co/ibm-granite/granite-4.1-3b-base",
+      "general.tags": [
+        "granite",
+        "granite-4.2",
+        "reasoning",
+        "thinking",
+        "tool-calling",
+        "ibm",
+        "text-generation"
+      ],
+      "general.languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "ja",
+        "pt",
+        "ar",
+        "cs",
+        "it",
+        "ko",
+        "nl",
+        "zh"
+      ],
+      "granite.block_count": 40,
+      "granite.context_length": 131072,
+      "granite.embedding_length": 2560,
+      "granite.feed_forward_length": 8192,
+      "granite.attention.head_count": 40,
+      "granite.attention.head_count_kv": 8,
+      "granite.rope.freq_base": 10000000,
+      "granite.attention.layer_norm_rms_epsilon": 0.000009999999747378752,
+      "granite.vocab_size": 100352,
+      "granite.rope.dimension_count": 64,
+      "granite.attention.scale": 0.015625,
+      "granite.embedding_scale": 1,
+      "granite.residual_scale": 1,
+      "granite.logit_scale": 1
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:0946fa72593248201cedb81b487d08408461bb8b5a1a7d4c32ddb23e7a0f66cd",
+        "size": 417
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:20e436143017578687f7f848225cc6c6038126c84149192229c7dff6e4e0f427",
+          "size": 2244012160,
+          "from": "/Users/runner/.ollama/models/blobs/sha256-20e436143017578687f7f848225cc6c6038126c84149192229c7dff6e4e0f427"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+          "size": 11357
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:02897ca0d6a33881b1581b775af2884e9eed3ea9b7db8141e0dc0ef2e707fd18",
+          "size": 31
+        }
+      ]
+    }
+  },
+  {
+    "id": "gemma4-12b",
+    "tag": "gemma4:12b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "gemma4",
+      "model_families": [
+        "gemma4"
+      ],
+      "model_type": "11.9B",
+      "file_type": "Q4_K_M",
+      "renderer": "gemma4",
+      "parser": "gemma4",
+      "requires": "0.30.5",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:1278394b693672ac2799eadc9a83fd98259a6a88a40acfb1dcaa6c6fc895a606",
+          "sha256:675ad6e68101ca9413ec806855c452362f0213f2dfc5800996b086fdb8119842",
+          "sha256:0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+          "sha256:56380ca2ab89f1f68c283f4d50863c0bcab52ae3f1b9a88e4ab5617b176f71a3"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "gemma4",
+      "general.type": "model",
+      "general.sampling.top_k": 64,
+      "general.sampling.top_p": 0.949999988079071,
+      "general.sampling.temp": 1,
+      "general.size_label": "12B",
+      "general.license": "apache-2.0",
+      "general.license.link": "https://ai.google.dev/gemma/docs/gemma_4_license",
+      "general.base_model.count": 1,
+      "general.base_model.0.name": "Gemma 4 12B",
+      "general.base_model.0.organization": "Google",
+      "general.base_model.0.repo_url": "https://huggingface.co/google/gemma-4-12B",
+      "general.tags": [
+        "any-to-any"
+      ],
+      "gemma4.block_count": 48,
+      "gemma4.context_length": 262144,
+      "gemma4.embedding_length": 3840,
+      "gemma4.feed_forward_length": 15360,
+      "gemma4.attention.head_count": 16,
+      "gemma4.attention.head_count_kv": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        1,
+        8,
+        8,
+        8,
+        8,
+        8,
+        1,
+        8,
+        8,
+        8,
+        8,
+        8,
+        1,
+        8,
+        8,
+        8,
+        8,
+        8,
+        1,
+        8,
+        8,
+        8,
+        8,
+        8,
+        1,
+        8,
+        8,
+        8,
+        8,
+        8,
+        1,
+        8,
+        8,
+        8,
+        8,
+        8,
+        1,
+        8,
+        8,
+        8,
+        8,
+        8,
+        1
+      ],
+      "gemma4.rope.freq_base": 1000000,
+      "gemma4.rope.freq_base_swa": 10000,
+      "gemma4.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "gemma4.attention.key_length": 512,
+      "gemma4.attention.value_length": 512,
+      "gemma4.final_logit_softcapping": 30,
+      "gemma4.attention.sliding_window": 1024,
+      "gemma4.attention.shared_kv_layers": 0,
+      "gemma4.embedding_length_per_layer_input": 0,
+      "gemma4.attention.sliding_window_pattern": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "gemma4.attention.key_length_swa": 256,
+      "gemma4.attention.value_length_swa": 256,
+      "gemma4.rope.dimension_count": 512,
+      "gemma4.rope.dimension_count_swa": 256
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:c805f5b265d8e695c44f4065dfc368206cd8026447604925fef8db57ee32ee23",
+        "size": 548
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:1278394b693672ac2799eadc9a83fd98259a6a88a40acfb1dcaa6c6fc895a606",
+          "size": 7381382048
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.projector",
+          "digest": "sha256:675ad6e68101ca9413ec806855c452362f0213f2dfc5800996b086fdb8119842",
+          "size": 175115584,
+          "from": "mmproj-gemma-4-12B-it-bf16.gguf"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+          "size": 10174
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:56380ca2ab89f1f68c283f4d50863c0bcab52ae3f1b9a88e4ab5617b176f71a3",
+          "size": 42
+        }
+      ]
+    }
+  },
+  {
+    "id": "granite4.2-8b",
+    "tag": "granite4.2:8b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "granite",
+      "model_families": [
+        "granite"
+      ],
+      "model_type": "8.8B",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:16a9369d0805f80b7377d25d87f937a90c05dc04ad79173a52001e42c9aab311",
+          "sha256:58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+          "sha256:02897ca0d6a33881b1581b775af2884e9eed3ea9b7db8141e0dc0ef2e707fd18"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "granite",
+      "general.type": "model",
+      "general.sampling.top_p": 0.949999988079071,
+      "general.sampling.temp": 1,
+      "general.name": "Granite 4.2 8b",
+      "general.basename": "granite-4.2",
+      "general.size_label": "8B",
+      "general.license": "apache-2.0",
+      "general.base_model.count": 1,
+      "general.base_model.0.name": "Granite 4.1 8b Base",
+      "general.base_model.0.organization": "Ibm Granite",
+      "general.base_model.0.repo_url": "https://huggingface.co/ibm-granite/granite-4.1-8b-base",
+      "general.tags": [
+        "granite",
+        "granite-4.2",
+        "reasoning",
+        "thinking",
+        "tool-calling",
+        "ibm",
+        "text-generation"
+      ],
+      "general.languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "ja",
+        "pt",
+        "ar",
+        "cs",
+        "it",
+        "ko",
+        "nl",
+        "zh"
+      ],
+      "granite.block_count": 40,
+      "granite.context_length": 131072,
+      "granite.embedding_length": 4096,
+      "granite.feed_forward_length": 12800,
+      "granite.attention.head_count": 32,
+      "granite.attention.head_count_kv": 8,
+      "granite.rope.freq_base": 10000000,
+      "granite.attention.layer_norm_rms_epsilon": 0.000009999999747378752,
+      "granite.vocab_size": 100352,
+      "granite.rope.dimension_count": 128,
+      "granite.attention.scale": 0.0078125,
+      "granite.embedding_scale": 1,
+      "granite.residual_scale": 1,
+      "granite.logit_scale": 1
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:d86276ca46ace9753cefd3aaa5309b99a926479860916e87a873e332f8c79dfc",
+        "size": 417
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:16a9369d0805f80b7377d25d87f937a90c05dc04ad79173a52001e42c9aab311",
+          "size": 5347917952,
+          "from": "/Users/runner/.ollama/models/blobs/sha256-16a9369d0805f80b7377d25d87f937a90c05dc04ad79173a52001e42c9aab311"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+          "size": 11357
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:02897ca0d6a33881b1581b775af2884e9eed3ea9b7db8141e0dc0ef2e707fd18",
+          "size": 31
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3.8-27b",
+    "tag": "qwen3.8:27b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen35",
+      "model_families": [
+        "qwen35"
+      ],
+      "model_type": "27.3B",
+      "file_type": "Q4_K_M",
+      "renderer": "qwen3.8",
+      "parser": "qwen3.5",
+      "requires": "0.32.12",
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    "metadata": {
+      "general.architecture": "qwen35",
+      "general.type": "model",
+      "general.sampling.top_k": 20,
+      "general.sampling.top_p": 0.949999988079071,
+      "general.sampling.temp": 1,
+      "general.name": "Qwen3.8 27B 0814",
+      "general.version": "0814",
+      "general.basename": "Qwen3.8",
+      "general.size_label": "27B",
+      "general.license": "apache-2.0",
+      "general.tags": [
+        "image-text-to-text"
+      ],
+      "qwen35.block_count": 65,
+      "qwen35.context_length": 262144,
+      "qwen35.embedding_length": 5120,
+      "qwen35.feed_forward_length": 17408,
+      "qwen35.attention.head_count": 24,
+      "qwen35.attention.head_count_kv": 4,
+      "qwen35.rope.dimension_sections": [
+        11,
+        11,
+        10,
+        0
+      ],
+      "qwen35.rope.freq_base": 10000000,
+      "qwen35.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen35.attention.key_length": 256,
+      "qwen35.attention.value_length": 256,
+      "qwen35.nextn_predict_layers": 1,
+      "qwen35.ssm.conv_kernel": 4,
+      "qwen35.ssm.state_size": 128,
+      "qwen35.ssm.group_count": 16,
+      "qwen35.ssm.time_step_rank": 48,
+      "qwen35.ssm.inner_size": 6144,
+      "qwen35.full_attention_interval": 4,
+      "qwen35.rope.dimension_count": 64
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:492b2922d38e553cabc2d319345644ed482874fbf5e5c9e4495cbf8e17b0cf5f",
+        "size": 215
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.projector",
+          "digest": "sha256:ac3714bfdddeca31351f2752bf1a63f266f4df87c0b68c895e44945ca704448e",
+          "size": 931146016,
+          "from": "qwen3.8:27b-q4_K_M"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:f5f1dd8920d417aac2718b0bda3403da274301efdd6760b4f0f4b864ff2ad57d",
+          "size": 16810714464,
+          "from": "qwen3.8:27b-q4_K_M"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:4c6a8e842ef0d8504549facfb03f1273a8d0022991519bc1888522cc1a5517d1",
+          "size": 11345,
+          "from": "qwen3.8:27b-q4_K_M"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:906ee87bde6cff7bf3c3b1550f55cbbec261e027187fbb9f511f908ffc418334",
+          "size": 114
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3.6-27b",
+    "tag": "qwen3.6:27b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen35",
+      "model_families": [
+        "qwen35"
+      ],
+      "model_type": "27.3B",
+      "file_type": "Q4_K_M",
+      "renderer": "qwen3.5",
+      "parser": "qwen3.5",
+      "requires": "0.30.0",
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    "metadata": {
+      "qwen35.attention.head_count": 24,
+      "qwen35.attention.head_count_kv": 4,
+      "qwen35.attention.key_length": 256,
+      "qwen35.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen35.attention.value_length": 256,
+      "qwen35.block_count": 65,
+      "qwen35.context_length": 262144,
+      "qwen35.embedding_length": 5120,
+      "qwen35.feed_forward_length": 17408,
+      "qwen35.full_attention_interval": 4,
+      "general.architecture": "qwen35",
+      "qwen35.nextn_predict_layers": 1,
+      "qwen35.rope.dimension_count": 64,
+      "qwen35.rope.dimension_sections": [
+        11,
+        11,
+        10,
+        0
+      ],
+      "qwen35.rope.freq_base": 10000000,
+      "qwen35.ssm.conv_kernel": 4,
+      "qwen35.ssm.group_count": 16,
+      "qwen35.ssm.inner_size": 6144,
+      "qwen35.ssm.state_size": 128,
+      "qwen35.ssm.time_step_rank": 48
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:370b24c023f51e75e7f3b70e1b89d59a38ec2fb5af3289fcf92ff78b3fadd619",
+        "size": 214
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:415aad607fc297a2ad84cda238febbde295f49f17c17ad7784e2246060fb06d0",
+          "size": 16837919680,
+          "from": "qwen3.6-source:27b-mtp-q4_K_M-20260824"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.projector",
+          "digest": "sha256:c24919d9eb66eda0af3d7a62ef49bef7948389099de880e0cb5eefe2d3c31769",
+          "size": 931145568,
+          "from": "qwen3.6-source:27b-mtp-q4_K_M-20260824"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:5f3a3c817e78f5b8a4ad2d2c458a3e4b2cce470d6c12642c4eeb12cb8a9bf51d",
+          "size": 11357,
+          "from": "qwen3.6-source:27b-mtp-q4_K_M-20260824"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:3f3289008cd00add7198019000e37526b44b1fb3f2bd340b0d411a25fb17838c",
+          "size": 114
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3.6-35b",
+    "tag": "qwen3.6:35b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen35moe",
+      "model_families": [
+        "qwen35moe"
+      ],
+      "model_type": "35.5B",
+      "file_type": "Q4_K_M",
+      "renderer": "qwen3.5",
+      "parser": "qwen3.5",
+      "requires": "0.30.0",
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    "metadata": {
+      "qwen35moe.attention.head_count": 16,
+      "qwen35moe.attention.head_count_kv": 2,
+      "qwen35moe.attention.key_length": 256,
+      "qwen35moe.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen35moe.attention.value_length": 256,
+      "qwen35moe.block_count": 41,
+      "qwen35moe.context_length": 262144,
+      "qwen35moe.embedding_length": 2048,
+      "qwen35moe.expert_count": 256,
+      "qwen35moe.expert_feed_forward_length": 512,
+      "qwen35moe.expert_shared_feed_forward_length": 512,
+      "qwen35moe.expert_used_count": 8,
+      "qwen35moe.feed_forward_length": 0,
+      "qwen35moe.full_attention_interval": 4,
+      "general.architecture": "qwen35moe",
+      "qwen35moe.nextn_predict_layers": 1,
+      "qwen35moe.rope.dimension_count": 64,
+      "qwen35moe.rope.dimension_sections": [
+        11,
+        11,
+        10,
+        0
+      ],
+      "qwen35moe.rope.freq_base": 10000000,
+      "qwen35moe.ssm.conv_kernel": 4,
+      "qwen35moe.ssm.group_count": 16,
+      "qwen35moe.ssm.inner_size": 4096,
+      "qwen35moe.ssm.state_size": 128,
+      "qwen35moe.ssm.time_step_rank": 32
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:99afa5bbf1e7038bda7d028e100ee76b7337c943468d52590de3282db7b52adb",
+        "size": 220
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:d372de8e934898a59e6ccfabc3368474711384d8f1fd4d22d87a3f0a45400cdc",
+          "size": 21718480960,
+          "from": "qwen3.6-source:35b-a3b-mtp-q4_K_M-20260824"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.projector",
+          "digest": "sha256:a62390d25b4b4a2d8afd7cc3c90021c11935c1fdd48d7cb0723ab71cd02a598e",
+          "size": 902821728,
+          "from": "qwen3.6-source:35b-a3b-mtp-q4_K_M-20260824"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:5f3a3c817e78f5b8a4ad2d2c458a3e4b2cce470d6c12642c4eeb12cb8a9bf51d",
+          "size": 11357,
+          "from": "qwen3.6-source:35b-a3b-mtp-q4_K_M-20260824"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:ce44c0f3ca1f7a126724e5285be7e1afdab202186c6379515ab0c1ffd40d3ecc",
+          "size": 116
+        }
+      ]
+    }
+  },
+  {
+    "id": "minicpm-v4.6-1b",
+    "tag": "minicpm-v4.6:1b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen35",
+      "model_families": [
+        "qwen35"
+      ],
+      "model_type": "752.16M",
+      "file_type": "Q4_K_M",
+      "requires": "0.30.0",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:6b0c74962c44bc6bf4b655b9b02c13eda9d5a0491543ae976d1ac18e4b7892e2",
+          "sha256:ca931d861d0801d9003e50697cd764721a334107c0e0415a51168ee1938462de"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen35",
+      "general.type": "model",
+      "general.sampling.top_k": 0,
+      "general.sampling.top_p": 1,
+      "general.sampling.temp": 0.699999988079071,
+      "general.name": "MiniCPM V 4_6",
+      "general.finetune": "4_6",
+      "general.basename": "MiniCPM-V",
+      "general.size_label": "752M",
+      "qwen35.block_count": 24,
+      "qwen35.context_length": 262144,
+      "qwen35.embedding_length": 1024,
+      "qwen35.feed_forward_length": 3584,
+      "qwen35.attention.head_count": 8,
+      "qwen35.attention.head_count_kv": 2,
+      "qwen35.rope.freq_base": 10000000,
+      "qwen35.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen35.attention.key_length": 256,
+      "qwen35.attention.value_length": 256,
+      "qwen35.ssm.conv_kernel": 4,
+      "qwen35.ssm.state_size": 128,
+      "qwen35.ssm.group_count": 16,
+      "qwen35.ssm.time_step_rank": 16,
+      "qwen35.ssm.inner_size": 2048,
+      "qwen35.full_attention_interval": 4,
+      "qwen35.rope.dimension_count": 64,
+      "qwen35.rope.dimension_sections": [
+        11,
+        11,
+        10,
+        0
+      ]
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:7ff7e70edbb9a487fe83502ebcdfd8afcbdcd402e58cd345ef96f0f6a4b2c334",
+        "size": 364
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:6b0c74962c44bc6bf4b655b9b02c13eda9d5a0491543ae976d1ac18e4b7892e2",
+          "size": 529101504
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.projector",
+          "digest": "sha256:ca931d861d0801d9003e50697cd764721a334107c0e0415a51168ee1938462de",
+          "size": 1108746944,
+          "from": "mmproj-model-f16.gguf"
+        }
+      ]
+    }
+  },
+  {
+    "id": "ministral-3-3b",
+    "tag": "ministral-3:3b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "mistral3",
+      "model_families": [
+        "mistral3"
+      ],
+      "model_type": "3.8B",
+      "file_type": "Q4_K_M",
+      "parser": "ministral",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:910e4bf4e2338f181e99796d7452404e85c1b6bbbf8cd0bb094672cf9b6f2f22",
+          "sha256:24c6226aca35b16350187fb9125e7cb4e746795c78edd3cb1de45654c7e77181",
+          "sha256:43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1",
+          "sha256:e0daf17ff83eace4813f9e8554b262f6cc33ad880ff8df41a156ff9ef5522ddb"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "mistral3",
+      "general.file_type": 15,
+      "general.parameter_count": 3849090048,
+      "general.quantization_version": 2,
+      "mistral3.attention.head_count": 32,
+      "mistral3.attention.head_count_kv": 8,
+      "mistral3.attention.key_length": 128,
+      "mistral3.attention.layer_norm_rms_epsilon": 0.000009999999747378752,
+      "mistral3.attention.value_length": 128,
+      "mistral3.block_count": 26,
+      "mistral3.context_length": 262144,
+      "mistral3.embedding_length": 3072,
+      "mistral3.feed_forward_length": 9216,
+      "mistral3.image_token_index": 10,
+      "mistral3.mm.projector_bias": false,
+      "mistral3.mm.projector_hidden_act": "gelu",
+      "mistral3.rope.dimension_count": 128,
+      "mistral3.rope.freq_base": 1000000,
+      "mistral3.rope.scaling.beta_fast": 32,
+      "mistral3.rope.scaling.beta_slow": 1,
+      "mistral3.rope.scaling.factor": 16,
+      "mistral3.rope.scaling.mscale": 1,
+      "mistral3.rope.scaling.mscale_all_dim": 1,
+      "mistral3.rope.scaling.original_context_length": 16384,
+      "mistral3.rope.scaling.type": "yarn",
+      "mistral3.rope.scaling_beta": 0.10000000149011612,
+      "mistral3.spatial_merge_size": 2,
+      "mistral3.vision.attention.head_count": 16,
+      "mistral3.vision.attention.key_length": 64,
+      "mistral3.vision.block_count": 24,
+      "mistral3.vision.embedding_length": 1024,
+      "mistral3.vision.feed_forward_length": 4096,
+      "mistral3.vision.image_size": 1540,
+      "mistral3.vision.num_channels": 3,
+      "mistral3.vision.patch_size": 14,
+      "mistral3.vision.rope.freq_base": 10000,
+      "mistral3.vocab_size": 131072
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:12d848b3c47b6e7f93897fb9f8ba7d2d6d9417e6794e029f8450669cfa430793",
+        "size": 514
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:910e4bf4e2338f181e99796d7452404e85c1b6bbbf8cd0bb094672cf9b6f2f22",
+          "size": 2953825504
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.template",
+          "digest": "sha256:24c6226aca35b16350187fb9125e7cb4e746795c78edd3cb1de45654c7e77181",
+          "size": 3413
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1",
+          "size": 11356
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:e0daf17ff83eace4813f9e8554b262f6cc33ad880ff8df41a156ff9ef5522ddb",
+          "size": 21
+        }
+      ]
+    }
+  },
+  {
+    "id": "ministral-3-8b",
+    "tag": "ministral-3:8b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "mistral3",
+      "model_families": [
+        "mistral3"
+      ],
+      "model_type": "8.9B",
+      "file_type": "Q4_K_M",
+      "parser": "ministral",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:3ea32f882c990baebcfe6ab5cda2e3167d54ab16d7937c0b9aa3db11aba01574",
+          "sha256:5b74c26b9e0b6358e73d0a7eb2f955105097e7bd10b45fa0d2a50f0a906e0798",
+          "sha256:43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1",
+          "sha256:e0daf17ff83eace4813f9e8554b262f6cc33ad880ff8df41a156ff9ef5522ddb"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "mistral3",
+      "general.file_type": 15,
+      "general.parameter_count": 8918026240,
+      "general.quantization_version": 2,
+      "mistral3.attention.head_count": 32,
+      "mistral3.attention.head_count_kv": 8,
+      "mistral3.attention.key_length": 128,
+      "mistral3.attention.layer_norm_rms_epsilon": 0.000009999999747378752,
+      "mistral3.attention.value_length": 128,
+      "mistral3.block_count": 34,
+      "mistral3.context_length": 262144,
+      "mistral3.embedding_length": 4096,
+      "mistral3.feed_forward_length": 14336,
+      "mistral3.image_token_index": 10,
+      "mistral3.mm.projector_bias": false,
+      "mistral3.mm.projector_hidden_act": "gelu",
+      "mistral3.rope.dimension_count": 128,
+      "mistral3.rope.freq_base": 1000000,
+      "mistral3.rope.scaling.beta_fast": 32,
+      "mistral3.rope.scaling.beta_slow": 1,
+      "mistral3.rope.scaling.factor": 16,
+      "mistral3.rope.scaling.mscale": 1,
+      "mistral3.rope.scaling.mscale_all_dim": 1,
+      "mistral3.rope.scaling.original_context_length": 16384,
+      "mistral3.rope.scaling.type": "yarn",
+      "mistral3.rope.scaling_beta": 0.10000000149011612,
+      "mistral3.spatial_merge_size": 2,
+      "mistral3.vision.attention.head_count": 16,
+      "mistral3.vision.attention.key_length": 64,
+      "mistral3.vision.block_count": 24,
+      "mistral3.vision.embedding_length": 1024,
+      "mistral3.vision.feed_forward_length": 4096,
+      "mistral3.vision.image_size": 1540,
+      "mistral3.vision.num_channels": 3,
+      "mistral3.vision.patch_size": 14,
+      "mistral3.vision.rope.freq_base": 10000,
+      "mistral3.vocab_size": 131072
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:22eb5c960e5fcd76cb4916c43224d8589813f3ce02d8707164b807c16210aff6",
+        "size": 514
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:3ea32f882c990baebcfe6ab5cda2e3167d54ab16d7937c0b9aa3db11aba01574",
+          "size": 6022221312
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.template",
+          "digest": "sha256:5b74c26b9e0b6358e73d0a7eb2f955105097e7bd10b45fa0d2a50f0a906e0798",
+          "size": 3413
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1",
+          "size": 11356
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:e0daf17ff83eace4813f9e8554b262f6cc33ad880ff8df41a156ff9ef5522ddb",
+          "size": 21
+        }
+      ]
+    }
+  },
+  {
+    "id": "ornith-1.5-9b",
+    "tag": "ornith-1.5:9b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen35",
+      "model_families": [
+        "qwen35"
+      ],
+      "model_type": "9.0B",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    "metadata": {
+      "general.architecture": "qwen35",
+      "general.type": "model",
+      "general.name": "Ornith-1.5-9B",
+      "general.version": "1000",
+      "general.finetune": "9b",
+      "general.size_label": "9.0B",
+      "qwen35.block_count": 32,
+      "qwen35.context_length": 262144,
+      "qwen35.embedding_length": 4096,
+      "qwen35.feed_forward_length": 12288,
+      "qwen35.attention.head_count": 16,
+      "qwen35.attention.head_count_kv": 4,
+      "qwen35.rope.dimension_sections": [
+        11,
+        11,
+        10,
+        0
+      ],
+      "qwen35.rope.freq_base": 10000000,
+      "qwen35.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen35.attention.key_length": 256,
+      "qwen35.attention.value_length": 256,
+      "qwen35.ssm.conv_kernel": 4,
+      "qwen35.ssm.state_size": 128,
+      "qwen35.ssm.group_count": 16,
+      "qwen35.ssm.time_step_rank": 32,
+      "qwen35.ssm.inner_size": 4096,
+      "qwen35.full_attention_interval": 4,
+      "qwen35.rope.dimension_count": 64
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:3d561cca0c790e33a88dd2ce5e4be9ee59176212b2fc62d7c4c2654821bc59d1",
+        "size": 153
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:852922174ee4f76621df26105333f1dfe2171cdfb60ebe5a4b013836681a8a77",
+          "size": 5629109056
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.projector",
+          "digest": "sha256:2635637dd72b4d39a97331373a73366b69a0a6a14151b2a1da0a97b311e2461f",
+          "size": 921704448,
+          "from": "mmproj-Ornith-1.5-9B-BF16.gguf"
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3-vl-2b",
+    "tag": "qwen3-vl:2b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen3vl",
+      "model_families": [
+        "qwen3vl"
+      ],
+      "model_type": "2.1B",
+      "file_type": "Q4_K_M",
+      "renderer": "qwen3-vl-thinking",
+      "parser": "qwen3-vl-thinking",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:ebabfa59b71a5b96e0281ec2994977e785284e0939807a99fc340dec3c6f10de",
+          "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "sha256:f6417cb1e26962991f8e875a93f3cb0f92bc9b4955e004881251ccbf934a19d2"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen3vl",
+      "general.file_type": 15,
+      "general.parameter_count": 2127532032,
+      "general.quantization_version": 2,
+      "qwen3vl.attention.head_count": 16,
+      "qwen3vl.attention.head_count_kv": 8,
+      "qwen3vl.attention.key_length": 128,
+      "qwen3vl.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen3vl.attention.value_length": 128,
+      "qwen3vl.block_count": 28,
+      "qwen3vl.context_length": 262144,
+      "qwen3vl.embedding_length": 2048,
+      "qwen3vl.feed_forward_length": 6144,
+      "qwen3vl.rope.freq_base": 5000000,
+      "qwen3vl.vision.attention.head_count": 16,
+      "qwen3vl.vision.attention.layer_norm_epsilon": 9.999999974752427e-7,
+      "qwen3vl.vision.block_count": 24,
+      "qwen3vl.vision.deepstack_visual_indexes": [
+        5,
+        11,
+        17
+      ],
+      "qwen3vl.vision.embedding_length": 1024,
+      "qwen3vl.vision.image_mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen3vl.vision.image_std": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen3vl.vision.longest_edge": 16777216,
+      "qwen3vl.vision.num_channels": 3,
+      "qwen3vl.vision.patch_size": 16,
+      "qwen3vl.vision.rope.freq_base": 10000,
+      "qwen3vl.vision.shortest_edge": 65536,
+      "qwen3vl.vision.spatial_merge_size": 2,
+      "qwen3vl.vision.temporal_patch_size": 2
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:b1b0036de383cfacd2f6f0ec14c43139d08a215e673fadaf4f3601eac4bd5490",
+        "size": 551
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:ebabfa59b71a5b96e0281ec2994977e785284e0939807a99fc340dec3c6f10de",
+          "size": 1889496384
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "size": 11355,
+          "from": "qwen3-vl:2b-thinking-bf16"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "size": 11355
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:f6417cb1e26962991f8e875a93f3cb0f92bc9b4955e004881251ccbf934a19d2",
+          "size": 42
+        }
+      ]
+    }
+  },
+  {
+    "id": "lfm2.5-8b",
+    "tag": "lfm2.5:8b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "lfm2moe",
+      "model_families": [
+        "lfm2moe"
+      ],
+      "model_type": "8.5B",
+      "file_type": "Q4_K_M",
+      "renderer": "lfm2",
+      "parser": "lfm2-thinking",
+      "requires": "0.30.0",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:63c9be0cc3d5d7b0377161064a74c82b1a5a6ee9ba4a9a3cf034293d6dd09282",
+          "sha256:058cb51ed3d592a7bf27945e31eb8a2657ea72c46b7a97672a4814a90786071c",
+          "sha256:e57cad4daa6c59ab888f1247464192a9cbbbff6061234f4033a08e4190ec58f8"
+        ]
+      }
+    },
+    "metadata": {
+      "lfm2moe.attention.head_count": 32,
+      "lfm2moe.attention.head_count_kv": [
+        0,
+        0,
+        8,
+        0,
+        0,
+        0,
+        8,
+        0,
+        0,
+        0,
+        8,
+        0,
+        0,
+        0,
+        8,
+        0,
+        0,
+        0,
+        8,
+        0,
+        0,
+        8,
+        0,
+        0
+      ],
+      "lfm2moe.attention.key_length": 64,
+      "lfm2moe.attention.layer_norm_rms_epsilon": 0.000009999999747378752,
+      "lfm2moe.attention.value_length": 64,
+      "lfm2moe.block_count": 24,
+      "lfm2moe.context_length": 128000,
+      "lfm2moe.embedding_length": 2048,
+      "lfm2moe.expert_count": 32,
+      "lfm2moe.expert_feed_forward_length": 1792,
+      "lfm2moe.expert_gating_func": 2,
+      "lfm2moe.expert_used_count": 4,
+      "lfm2moe.expert_weights_scale": 1,
+      "lfm2moe.feed_forward_length": 7168,
+      "general.architecture": "lfm2moe",
+      "lfm2moe.leading_dense_block_count": 2,
+      "lfm2moe.rope.freq_base": 5000000,
+      "lfm2moe.shortconv.l_cache": 3
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:18c8fd148a015b57c7322a4a76185668c1f4fbfaeac52234f3102a1e48cd3087",
+        "size": 480
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:63c9be0cc3d5d7b0377161064a74c82b1a5a6ee9ba4a9a3cf034293d6dd09282",
+          "size": 5156064416
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:058cb51ed3d592a7bf27945e31eb8a2657ea72c46b7a97672a4814a90786071c",
+          "size": 10576
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:e57cad4daa6c59ab888f1247464192a9cbbbff6061234f4033a08e4190ec58f8",
+          "size": 53
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3-coder-30b",
+    "tag": "qwen3-coder:30b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen3moe",
+      "model_families": [
+        "qwen3moe"
+      ],
+      "model_type": "30.5B",
+      "file_type": "Q4_K_M",
+      "architecture": "amd64",
+      "os": "linux",
+      "renderer": "qwen3-coder",
+      "parser": "qwen3-coder",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a",
+          "sha256:c6a614465b370a1b4eb95e964f907a24396a5bb842eab6cc730f2cc4c309dc48",
+          "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "sha256:69aa441ea44ff5e1e7b56cac4f471e71e8a5e2e3963c29684a9234d5d5e5f7aa"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen3moe",
+      "general.basename": "Qwen3-Coder",
+      "general.file_type": 15,
+      "general.finetune": "Instruct",
+      "general.license": "apache-2.0",
+      "general.license.link": "https://huggingface.co/Qwen/Qwen3-Coder-30B-A3B-Instruct/blob/main/LICENSE",
+      "general.name": "Qwen3 Coder 30B A3B Instruct",
+      "general.parameter_count": 30532122624,
+      "general.quantization_version": 2,
+      "general.size_label": "30B-A3B",
+      "general.tags": [
+        "text-generation"
+      ],
+      "general.type": "model",
+      "qwen3moe.attention.head_count": 32,
+      "qwen3moe.attention.head_count_kv": 4,
+      "qwen3moe.attention.key_length": 128,
+      "qwen3moe.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen3moe.attention.value_length": 128,
+      "qwen3moe.block_count": 48,
+      "qwen3moe.context_length": 262144,
+      "qwen3moe.embedding_length": 2048,
+      "qwen3moe.expert_count": 128,
+      "qwen3moe.expert_feed_forward_length": 768,
+      "qwen3moe.expert_shared_feed_forward_length": 0,
+      "qwen3moe.expert_used_count": 8,
+      "qwen3moe.feed_forward_length": 5472,
+      "qwen3moe.rope.freq_base": 10000000
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:24a94682582c6045f4950846fc7711479dcecb478b86759f0306a2ef8484d318",
+        "size": 539
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:1194192cf2a187eb02722edcc3f77b11d21f537048ce04b67ccf8ba78863006a",
+          "size": 18556688736
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:d18a5cc71b84bc4af394a31116bd3932b42241de70c77d2b76d69a314ec8aa12",
+          "size": 11338
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:69aa441ea44ff5e1e7b56cac4f471e71e8a5e2e3963c29684a9234d5d5e5f7aa",
+          "size": 148
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3-vl-4b",
+    "tag": "qwen3-vl:4b",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen3vl",
+      "model_families": [
+        "qwen3vl"
+      ],
+      "model_type": "4.4B",
+      "file_type": "Q4_K_M",
+      "renderer": "qwen3-vl-thinking",
+      "parser": "qwen3-vl-thinking",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:9c60bdd691c1897bbfe5ddbc67336848e18c346b7ee2ab8541b135f208e5bb38",
+          "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "sha256:f6417cb1e26962991f8e875a93f3cb0f92bc9b4955e004881251ccbf934a19d2"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen3vl",
+      "general.file_type": 15,
+      "general.parameter_count": 4437815808,
+      "general.quantization_version": 2,
+      "qwen3vl.attention.head_count": 32,
+      "qwen3vl.attention.head_count_kv": 8,
+      "qwen3vl.attention.key_length": 128,
+      "qwen3vl.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen3vl.attention.value_length": 128,
+      "qwen3vl.block_count": 36,
+      "qwen3vl.context_length": 262144,
+      "qwen3vl.embedding_length": 2560,
+      "qwen3vl.feed_forward_length": 9728,
+      "qwen3vl.rope.freq_base": 5000000,
+      "qwen3vl.vision.attention.head_count": 16,
+      "qwen3vl.vision.attention.layer_norm_epsilon": 9.999999974752427e-7,
+      "qwen3vl.vision.block_count": 24,
+      "qwen3vl.vision.deepstack_visual_indexes": [
+        5,
+        11,
+        17
+      ],
+      "qwen3vl.vision.embedding_length": 1024,
+      "qwen3vl.vision.image_mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen3vl.vision.image_std": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "qwen3vl.vision.longest_edge": 16777216,
+      "qwen3vl.vision.num_channels": 3,
+      "qwen3vl.vision.patch_size": 16,
+      "qwen3vl.vision.rope.freq_base": 10000,
+      "qwen3vl.vision.shortest_edge": 65536,
+      "qwen3vl.vision.spatial_merge_size": 2,
+      "qwen3vl.vision.temporal_patch_size": 2
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:3353ed4a819bb8696f0b26dfe2ecc23cf3ba70566112fe6a6673f83a6b62fc30",
+        "size": 551
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:9c60bdd691c1897bbfe5ddbc67336848e18c346b7ee2ab8541b135f208e5bb38",
+          "size": 3295612832
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "size": 11355,
+          "from": "qwen3-vl:4b-thinking-bf16"
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "size": 11355
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:f6417cb1e26962991f8e875a93f3cb0f92bc9b4955e004881251ccbf934a19d2",
+          "size": 42
+        }
+      ]
+    }
+  },
+  {
+    "id": "qwen3-coder-next-q4_k_m",
+    "tag": "qwen3-coder-next:q4_K_M",
+    "config": {
+      "model_format": "gguf",
+      "model_family": "qwen3next",
+      "model_families": [
+        "qwen3next"
+      ],
+      "model_type": "79.7B",
+      "file_type": "Q4_K_M",
+      "renderer": "qwen3-coder",
+      "parser": "qwen3-coder",
+      "requires": "0.15.5",
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:30e51a7cb1cf1333b9e298b90b4c7790fe2572d8736b002482a0ac96328a2ffb",
+          "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "sha256:d3cd8304aca0bee18d90ec3736dd8e7800fb2831a8e8d4184573e0475ec4576e"
+        ]
+      }
+    },
+    "metadata": {
+      "general.architecture": "qwen3next",
+      "general.file_type": 15,
+      "general.parameter_count": 79674391296,
+      "general.quantization_version": 2,
+      "qwen3next.attention.head_count": 16,
+      "qwen3next.attention.head_count_kv": [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2
+      ],
+      "qwen3next.attention.key_length": 256,
+      "qwen3next.attention.layer_norm_rms_epsilon": 9.999999974752427e-7,
+      "qwen3next.attention.value_length": 256,
+      "qwen3next.block_count": 48,
+      "qwen3next.context_length": 262144,
+      "qwen3next.embedding_length": 2048,
+      "qwen3next.expert_count": 512,
+      "qwen3next.expert_feed_forward_length": 512,
+      "qwen3next.expert_shared_feed_forward_length": 512,
+      "qwen3next.expert_used_count": 10,
+      "qwen3next.feed_forward_length": 5120,
+      "qwen3next.full_attention_interval": 4,
+      "qwen3next.norm_top_k_prob": true,
+      "qwen3next.rope.dimension_count": 64,
+      "qwen3next.rope.freq_base": 5000000,
+      "qwen3next.ssm.conv_kernel": 4,
+      "qwen3next.ssm.group_count": 16,
+      "qwen3next.ssm.inner_size": 4096,
+      "qwen3next.ssm.state_size": 128,
+      "qwen3next.ssm.time_step_rank": 32
+    },
+    "manifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:5d55cac51f303b790c7fafb707fbec596ad64c7af9282619aa7dc88a37646d4c",
+        "size": 490
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.ollama.image.model",
+          "digest": "sha256:30e51a7cb1cf1333b9e298b90b4c7790fe2572d8736b002482a0ac96328a2ffb",
+          "size": 51741599936
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.license",
+          "digest": "sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2",
+          "size": 11355
+        },
+        {
+          "mediaType": "application/vnd.ollama.image.params",
+          "digest": "sha256:d3cd8304aca0bee18d90ec3736dd8e7800fb2831a8e8d4184573e0475ec4576e",
+          "size": 42
+        }
+      ]
+    }
+  }
+]
