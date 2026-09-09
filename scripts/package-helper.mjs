@@ -59,7 +59,7 @@ for (const [name, data] of [["package.json", manifest], ["package-lock.json", lo
 await mkdir(path.dirname(output), { recursive: true });
 const result = spawnSync(process.platform === "win32" ? "python" : "python3", ["-c", `
 import json, os, stat, sys, zipfile
-entries = json.load(sys.stdin)
+entries = json.loads(sys.stdin.buffer.read().decode("utf-8"))
 output = sys.argv[1]
 with zipfile.ZipFile(output + ".tmp", "w", compression=zipfile.ZIP_STORED) as archive:
     for entry in sorted(entries, key=lambda item: item["name"]):

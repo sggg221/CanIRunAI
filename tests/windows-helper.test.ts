@@ -42,6 +42,20 @@ test("Windows configuration sharing retains Windows instead of silently becoming
   assert.ok(recommendations(config, models).some(entry => entry.result.compatible));
 });
 
+test("helper packaging ignores Python's console encoding and preserves Chinese source bytes", async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), "canirun-encoding-"));
+  try {
+    const first = path.join(dir, "normal.zip"), second = path.join(dir, "legacy-codepage.zip");
+    await exec(process.execPath, ["scripts/package-helper.mjs", "--output", first], { cwd: root });
+    await exec(process.execPath, ["scripts/package-helper.mjs", "--output", second], {
+      cwd: root, env: { ...process.env, PYTHONIOENCODING: "ascii:surrogateescape" },
+    });
+    assert.deepEqual(await readFile(first), await readFile(second));
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 test("Windows launcher is CRLF and does not bypass security or auto-install models", async () => {
   const launcher = await readFile(path.join(root, "Start CanIRunAI Helper.cmd"), "utf8");
   assert.ok(launcher.includes("\r\n"));
