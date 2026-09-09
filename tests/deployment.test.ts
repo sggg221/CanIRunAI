@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { Manager } from "../apps/bridge/manager.ts";
@@ -168,4 +168,66 @@ test("a new model fails preflight on an outdated runtime", async () => {
     const m = new Manager("unused");
     await assert.rejects(m.preflight("qwen3.5-0.8b"), /Ollama 0.17.1/);
   } finally { globalThis.fetch = original; }
+});
+
+test("a stopped outdated runtime is rechecked before any model pull", async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), "canirun-runtime-version-"));
+  const original = globalThis.fetch;
+  let versions = 0;
+  const requests: string[] = [];
+  await mkdir(path.join(dir, "runtime/bin"), { recursive: true });
+  await writeFile(path.join(dir, "runtime/bin/ollama"), "#!/bin/sh\nexit 0\n", { mode: 0o755 });
+  globalThis.fetch = async input => {
+    const url = String(input);
+    requests.push(url);
+    if (url.endsWith("/api/version")) {
+      if (++versions <= 3) throw new Error("Runtime stopped");
+      return Response.json({ version: "0.16.0" });
+    }
+    if (url.endsWith("/api/ps") || url.endsWith("/api/tags")) return Response.json({ models: [] });
+    if (url.endsWith("/api/pull")) return new Response('{"status":"success"}\n');
+    throw new Error(url);
+  };
+  try {
+    const manager = new Manager(dir);
+    await manager.init();
+    manager.device = async () => device;
+    const deployment = await manager.deploy("qwen3.5-0.8b");
+    await waitUntil(() => !manager.busy);
+    assert.ok(versions >= 5);
+    assert.equal(deployment.stage, "failed");
+    assert.equal(deployment.error?.code, "unsupported");
+    assert.match(deployment.error!.message, /Ollama 0.17.1/);
+    assert.equal(requests.some(url => url.endsWith("/api/pull") || url.endsWith("/api/generate")), false);
+  } finally {
+    globalThis.fetch = original;
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("missing runtime reports explicit installation action without downloading", async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), "canirun-runtime-missing-"));
+  const original = globalThis.fetch;
+  const requests: string[] = [];
+  globalThis.fetch = async input => {
+    const url = String(input);
+    requests.push(url);
+    if (url.endsWith("/api/ps")) return Response.json({ models: [] });
+    throw new Error("Runtime not installed");
+  };
+  try {
+    const manager = new Manager(dir, async () => { throw new Error("runtime_missing"); });
+    await manager.init();
+    manager.device = async () => device;
+    const deployment = await manager.deploy(models[0].id);
+    await waitUntil(() => !manager.busy);
+    assert.equal(deployment.stage, "failed");
+    assert.equal(deployment.error?.code, "runtime_missing");
+    assert.equal(deployment.error?.fix, "install_runtime");
+    assert.match(deployment.error!.message, /Confirm installation/);
+    assert.ok(requests.every(url => /^http:\/\/127\.0\.0\.1:11434\/api\/(version|ps)$/.test(url)));
+  } finally {
+    globalThis.fetch = original;
+    await rm(dir, { recursive: true, force: true });
+  }
 });

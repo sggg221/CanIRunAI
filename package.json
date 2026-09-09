@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "site:dev": "npm --prefix apps/site run dev",
-    "site:build": "npm --prefix apps/site run build",
+    "site:build": "npm run helper:package && npm --prefix apps/site run build",
     "site:preview": "npm --prefix apps/site run preview",
     "dev": "node --import tsx scripts/dev.ts",
+    "helper": "node --import tsx scripts/helper.ts",
+    "helper:package": "node scripts/package-helper.mjs",
     "bridge": "node --import tsx apps/bridge/server.ts",
     "test": "node --import tsx --test tests/*.test.ts",
     "check": "tsc --noEmit",

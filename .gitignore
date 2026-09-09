@@ -8,3 +8,4 @@ node_modules/
 .env*
 *.log
 .DS_Store
+apps/site/public/downloads/CanIRunAI-Helper.zip

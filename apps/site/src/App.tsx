@@ -48,6 +48,14 @@ import {
   type Category,
   type Sort,
 } from "./catalog";
+import { useBridge } from "./use-bridge";
+import {
+  ConnectionPanel,
+  LiveDevicePanel,
+  DeployDialog,
+  HELPER_DOWNLOAD,
+} from "./LocalConnection";
+import LocalWorkbench from "./LocalWorkbench";
 
 const models = registry as Model[];
 const repository = "https://github.com/sggg221/CanIRunAI";
@@ -107,10 +115,16 @@ function ModelCard({
   entry,
   onDetails,
   featured,
+  onDeploy,
+  deployDisabled,
+  connected,
 }: {
   entry: Recommendation;
   onDetails: () => void;
   featured: boolean;
+  onDeploy: () => void;
+  deployDisabled: boolean;
+  connected: boolean;
 }) {
   const { model, result } = entry;
   const variant = selectedVariant(entry);
@@ -173,6 +187,15 @@ function ModelCard({
       >
         查看模型详情 <ArrowUpRight size={17} />
       </button>
+      <button
+        className="button primary model-deploy"
+        disabled={deployDisabled}
+        onClick={onDeploy}
+        aria-label={`${connected ? "部署" : "连接助手以部署"} ${model.name}`}
+      >
+        <Download size={14} />
+        {connected ? "一键部署" : "连接助手后部署"}
+      </button>
     </article>
   );
 }
@@ -220,7 +243,7 @@ function ModelDetails({
             <strong>{statusLabels[result.status]}</strong>
             <p>
               {result.compatible
-                ? "基于手动输入的配置估算，不代表已在你的设备上验证。"
+                ? "根据当前所选配置估算；连接助手后使用实机配置，但仍不等于该模型的推理实测。"
                 : result.reasons.map(translateReason).join(" ")}
             </p>
           </div>
@@ -334,8 +357,7 @@ function ModelDetails({
           </a>
         </div>
         <p className="fine-print">
-          公开网站不会下载、安装或运行模型。请在 Apple Silicon Mac
-          上使用本地运行包。
+          模型由你授权的本机助手下载、安装和运行，网站服务器不执行推理。
         </p>
       </div>
     </dialog>
@@ -344,28 +366,48 @@ function ModelDetails({
 
 const faqs = [
   [
-    "这是在线 AI 聊天网站吗？",
-    "不是。这个网站帮助你选择适合 Mac 的本地模型，无需登录或安装。真实文字、图片聊天，以及模型的下载与管理，需要在你的 Mac 上启动本地运行包和 Ollama。网页本身不提供云端推理。",
+    "为什么自动检测需要本地助手？",
+    "浏览器不能可靠读取完整的芯片信息、当前可用内存和磁盘空间。首次启动并配对本地助手后，网页会自动使用助手检测到的真实配置。没有连接助手时，仍可展开手动评估；默认 16 GB / 12 GiB 可用内存 / 100 GiB 磁盘只是示例。",
   ],
   [
-    "网页会自动读取我的电脑配置吗？",
-    "不会。浏览器不能可靠读取 Apple 芯片型号、统一内存、当前空闲内存和磁盘空间。这里默认使用 16 GB 内存、12 GiB 可用内存和 100 GiB 剩余磁盘作为示例，请按实际情况调整。所有适配计算在浏览器内完成，不会把配置发送到服务器。",
+    "可以真正一键部署和聊天吗？",
+    "可以通过本机助手执行。选择模型并确认下载后，助手会进行预检、下载、校验与启动，网页显示真实进度。运行环境缺失或需要更新时会另外取得安装同意；切换模型会请求停止其他模型的确认。模型就绪后可在工作台进行文字和图片流式聊天，不是预设回复。",
   ],
   [
-    "“适合运行”就代表一定能流畅使用吗？",
-    "不代表。建议来自模型权重、KV 缓存、运行开销及系统预留内存的估算。其他应用的内存占用、上下文长度、Ollama 版本和模型更新都可能影响实际结果。网页不检测运行时版本、不预测生成速度，综合推荐排序也不是公开跑分。",
+    "我的配置和聊天会上传到哪里？",
+    "授权后的硬件状态、聊天文字和图片在当前网页与 127.0.0.1 本机助手之间传输，不发送给 GitHub Pages 或云模型服务器。配对码放在链接片段中并立即从地址栏移除；会话令牌只存放在当前标签页的 sessionStorage。聊天记录仅保留在当前页面，刷新或断开连接会清空。模型和运行环境的下载需要访问官方来源。",
+  ],
+  [
+    "“适合运行”是否保证速度和质量？",
+    "不保证。适配基于权重、KV 缓存、运行开销和系统预留内存估算；连接后助手还会检查实际运行时版本及模型校验值。其他应用、上下文长度和上游变更会影响结果。综合排序不是公开质量跑分，也不提供未经测量的生成速度。",
   ],
   [
     "Windows、Linux 和 Intel Mac 可以用吗？",
-    "可以用浏览器访问和浏览目录，但当前兼容性算法和本地运行包仅支持 Apple Silicon Mac。其他平台会明确显示暂不支持评估，而不是给出未经验证的兼容结论。",
+    "可以浏览模型目录，助手协议也会明确返回实际平台，但当前模型部署和运行环境安装只支持 Apple Silicon Mac。其他平台不会被伪装为 Mac 或获得虚假的部署成功状态。",
+  ],
+  [
+    "浏览器连不上本地助手怎么办？",
+    "保持助手终端运行，使用本页下载的新版助手，并允许浏览器访问本地网络。建议使用最新版 Chrome 或 Edge；浏览器策略因版本和设备管理设置而异。不要关闭安全保护。也可以使用原本地应用在 localhost:3000 打开其本地网页。",
   ],
   [
     "模型目录是最新的吗？",
-    "网站沿用仓库内置的精选模型目录，不承诺包含全部或最新模型。每个模型详情都标注了目录记录的核验日期、验证范围及官方来源；下载前请以官方模型页和本地运行包的校验结果为准。",
+    "目录沿用仓库内置数据，不承诺实时更新或全量覆盖。详情标注了历史核验日期、验证范围与官方来源；运行时仍按固定摘要进行校验，不会静默接受上游变化。",
   ],
 ];
 
 export default function App() {
+  const bridge = useBridge();
+  const [deployId, setDeployId] = useState<string | null>(null);
+  function requestDeploy(entry: Recommendation) {
+    if (bridge.phase !== "connected") {
+      document
+        .getElementById("local-assistant")
+        ?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("pair-code")?.focus({ preventScroll: true });
+      return;
+    }
+    setDeployId(entry.model.id);
+  }
   const [config, setConfig] = useState(() =>
     readConfigurationURL(window.location.href),
   );
@@ -397,7 +439,10 @@ export default function App() {
   useEffect(() => {
     setShareState("idle");
   }, [config]);
-  const entries = useMemo(() => recommendations(config, models), [config]);
+  const entries = useMemo(
+    () => bridge.status?.recommendations ?? recommendations(config, models),
+    [config, bridge.status],
+  );
   const visible = useMemo(
     () => filterModels(entries, { query, category, compatibleOnly, sort }),
     [entries, query, category, compatibleOnly, sort],
@@ -405,7 +450,19 @@ export default function App() {
   const compatible = entries.filter((e) => e.result.compatible).length;
   const selected = entries.find((e) => e.model.id === selectedId);
   const featuredId = entries.find((e) => e.result.compatible)?.model.id;
-  const shareURL = configurationURL(window.location.href, config);
+  const deployEntry = entries.find((e) => e.model.id === deployId);
+  const detected = bridge.status?.device;
+  const shareURL = configurationURL(
+    window.location.href,
+    detected
+      ? {
+          platform: detected.supported ? "apple" : "unsupported",
+          memoryGB: detected.memoryGB,
+          freeMemoryGB: detected.freeMemoryGB,
+          diskFreeGB: detected.diskFreeGB,
+        }
+      : config,
+  );
   const memoryOptions = [...new Set([...memories, config.memoryGB])].sort(
     (a, b) => a - b,
   );
@@ -465,13 +522,13 @@ export default function App() {
               能跑<span className="highlight">多聪明的 AI</span>？
             </h1>
             <p className="hero-description">
-              不用研究复杂参数，也不用盲目下载。
+              首次配对助手，自动识别你的 Mac。
               <br className="desktop-break" />
-              选好你的配置，找到刚刚好的本地 AI。
+              从选模型、一键部署，到真正的本地对话。
             </p>
             <div className="hero-actions">
-              <a className="button primary" href="#models">
-                发现适合我的模型 <ArrowDown size={17} />
+              <a className="button primary" href="#local-assistant">
+                连接助手，自动检测 <ArrowDown size={17} />
               </a>
               <a className="text-link" href="#guide">
                 第一次玩本地 AI？
@@ -513,170 +570,192 @@ export default function App() {
               </p>
             </div>
           </div>
-          <section className="device-panel" aria-labelledby="device-title">
-            <div className="device-top">
-              <span>
-                <span className="live-dot" /> 手动评估模式
-              </span>
-              <span className="mono">LOCAL FIRST</span>
-            </div>
-            <div className="device-heading">
-              <div className="chip-icon">
-                <Cpu size={31} strokeWidth={1.4} />
-              </div>
-              <div>
-                <h2 id="device-title">从你的设备开始</h2>
-                <p>示例配置，请按实际情况修改</p>
-              </div>
-              <span className="step-number">01</span>
-            </div>
-            <div className="device-fields">
-              <label className="field-label" htmlFor="platform">
-                设备平台
-              </label>
-              <div className="select-wrap">
-                <Laptop size={17} />
-                <select
-                  id="platform"
-                  value={config.platform}
-                  onChange={(e) =>
-                    setConfig({
-                      ...config,
-                      platform: e.target.value as typeof config.platform,
-                    })
-                  }
+          <div className="setup-column">
+            <ConnectionPanel bridge={bridge} />
+            {bridge.status ? (
+              <LiveDevicePanel bridge={bridge} />
+            ) : (
+              <details className="manual-mode">
+                <summary>暂不连接助手，手动评估配置</summary>
+                <section
+                  className="device-panel"
+                  aria-labelledby="device-title"
                 >
-                  <option value="apple">Apple Silicon Mac</option>
-                  <option value="unsupported">
-                    Intel Mac / Windows / Linux
-                  </option>
-                </select>
-                <ChevronDown size={15} />
-              </div>
-              <label className="field-label memory-label" htmlFor="memory">
-                统一内存 <span>苹果菜单 → 关于本机</span>
-              </label>
-              <div
-                className="memory-options"
-                role="group"
-                aria-label="常用内存配置"
-              >
-                {[8, 16, 24, 32].map((n) => (
-                  <button
-                    key={n}
-                    aria-pressed={config.memoryGB === n}
-                    onClick={() =>
-                      setConfig({
-                        ...config,
-                        memoryGB: n,
-                        freeMemoryGB: n * 0.75,
-                      })
-                    }
+                  <div className="device-top">
+                    <span>
+                      <span className="live-dot" /> 手动评估模式
+                    </span>
+                    <span className="mono">LOCAL FIRST</span>
+                  </div>
+                  <div className="device-heading">
+                    <div className="chip-icon">
+                      <Cpu size={31} strokeWidth={1.4} />
+                    </div>
+                    <div>
+                      <h2 id="device-title">从你的设备开始</h2>
+                      <p>示例配置，请按实际情况修改</p>
+                    </div>
+                    <span className="step-number">01</span>
+                  </div>
+                  <div className="device-fields">
+                    <label className="field-label" htmlFor="platform">
+                      设备平台
+                    </label>
+                    <div className="select-wrap">
+                      <Laptop size={17} />
+                      <select
+                        id="platform"
+                        value={config.platform}
+                        onChange={(e) =>
+                          setConfig({
+                            ...config,
+                            platform: e.target.value as typeof config.platform,
+                          })
+                        }
+                      >
+                        <option value="apple">Apple Silicon Mac</option>
+                        <option value="unsupported">
+                          Intel Mac / Windows / Linux
+                        </option>
+                      </select>
+                      <ChevronDown size={15} />
+                    </div>
+                    <label
+                      className="field-label memory-label"
+                      htmlFor="memory"
+                    >
+                      统一内存 <span>苹果菜单 → 关于本机</span>
+                    </label>
+                    <div
+                      className="memory-options"
+                      role="group"
+                      aria-label="常用内存配置"
+                    >
+                      {[8, 16, 24, 32].map((n) => (
+                        <button
+                          key={n}
+                          aria-pressed={config.memoryGB === n}
+                          onClick={() =>
+                            setConfig({
+                              ...config,
+                              memoryGB: n,
+                              freeMemoryGB: n * 0.75,
+                            })
+                          }
+                        >
+                          {n} <span>GB</span>
+                        </button>
+                      ))}
+                      <select
+                        id="memory"
+                        aria-label="统一内存（全部配置）"
+                        value={config.memoryGB}
+                        onChange={(e) =>
+                          setConfig({
+                            ...config,
+                            memoryGB: Number(e.target.value),
+                            freeMemoryGB: Number(e.target.value) * 0.75,
+                          })
+                        }
+                      >
+                        {memoryOptions.map((n) => (
+                          <option value={n} key={n}>
+                            {n} GB
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <details className="advanced-settings">
+                      <summary>
+                        <SlidersHorizontal size={13} /> 调整可用内存与磁盘{" "}
+                        <ChevronDown size={13} />
+                      </summary>
+                      <div className="advanced-content">
+                        <label htmlFor="free-memory">
+                          当前可用内存{" "}
+                          <strong>{config.freeMemoryGB.toFixed(1)} GiB</strong>
+                        </label>
+                        <input
+                          id="free-memory"
+                          type="range"
+                          min="0"
+                          max={config.memoryGB}
+                          step="0.5"
+                          value={config.freeMemoryGB}
+                          onChange={(e) =>
+                            setConfig({
+                              ...config,
+                              freeMemoryGB: Number(e.target.value),
+                            })
+                          }
+                        />
+                        <label htmlFor="disk">剩余磁盘空间（GiB）</label>
+                        <input
+                          id="disk"
+                          type="number"
+                          min="0"
+                          max="1000000"
+                          value={config.diskFreeGB}
+                          onChange={(e) =>
+                            setConfig({
+                              ...config,
+                              diskFreeGB: Math.max(
+                                0,
+                                Math.min(
+                                  1_000_000,
+                                  Number(e.target.value) || 0,
+                                ),
+                              ),
+                            })
+                          }
+                        />
+                        <p>
+                          切换总内存时，默认按 75% 可用估算；磁盘默认 100
+                          GiB。不是自动检测结果。
+                        </p>
+                      </div>
+                    </details>
+                  </div>
+                  <div
+                    className={`device-result ${config.platform !== "apple" ? "device-unsupported" : ""}`}
+                    aria-live="polite"
                   >
-                    {n} <span>GB</span>
-                  </button>
-                ))}
-                <select
-                  id="memory"
-                  aria-label="统一内存（全部配置）"
-                  value={config.memoryGB}
-                  onChange={(e) =>
-                    setConfig({
-                      ...config,
-                      memoryGB: Number(e.target.value),
-                      freeMemoryGB: Number(e.target.value) * 0.75,
-                    })
-                  }
-                >
-                  {memoryOptions.map((n) => (
-                    <option value={n} key={n}>
-                      {n} GB
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <details className="advanced-settings">
-                <summary>
-                  <SlidersHorizontal size={13} /> 调整可用内存与磁盘{" "}
-                  <ChevronDown size={13} />
-                </summary>
-                <div className="advanced-content">
-                  <label htmlFor="free-memory">
-                    当前可用内存{" "}
-                    <strong>{config.freeMemoryGB.toFixed(1)} GiB</strong>
-                  </label>
-                  <input
-                    id="free-memory"
-                    type="range"
-                    min="0"
-                    max={config.memoryGB}
-                    step="0.5"
-                    value={config.freeMemoryGB}
-                    onChange={(e) =>
-                      setConfig({
-                        ...config,
-                        freeMemoryGB: Number(e.target.value),
-                      })
-                    }
-                  />
-                  <label htmlFor="disk">剩余磁盘空间（GiB）</label>
-                  <input
-                    id="disk"
-                    type="number"
-                    min="0"
-                    max="1000000"
-                    value={config.diskFreeGB}
-                    onChange={(e) =>
-                      setConfig({
-                        ...config,
-                        diskFreeGB: Math.max(
-                          0,
-                          Math.min(1_000_000, Number(e.target.value) || 0),
-                        ),
-                      })
-                    }
-                  />
-                  <p>
-                    切换总内存时，默认按 75% 可用估算；磁盘默认 100
-                    GiB。不是自动检测结果。
-                  </p>
-                </div>
+                    <span className="result-icon">
+                      {config.platform === "apple" ? (
+                        <Check size={18} />
+                      ) : (
+                        <Info size={18} />
+                      )}
+                    </span>
+                    <div>
+                      <strong>
+                        {config.platform === "apple"
+                          ? `${compatible} 个模型，值得在你的 Mac 上试试`
+                          : "此平台暂不支持适配评估"}
+                      </strong>
+                      <p>
+                        {config.platform === "apple"
+                          ? "基于内存与磁盘估算，非本机实测"
+                          : "仍可浏览模型，不能据此判断兼容性"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="device-bottom">
+                    <span>
+                      <ShieldCheck size={13} /> 仅在浏览器内计算
+                    </span>
+                    <button onClick={() => setConfig({ ...defaults })}>
+                      恢复示例
+                    </button>
+                  </div>
+                </section>
               </details>
-            </div>
-            <div
-              className={`device-result ${config.platform !== "apple" ? "device-unsupported" : ""}`}
-              aria-live="polite"
-            >
-              <span className="result-icon">
-                {config.platform === "apple" ? (
-                  <Check size={18} />
-                ) : (
-                  <Info size={18} />
-                )}
-              </span>
-              <div>
-                <strong>
-                  {config.platform === "apple"
-                    ? `${compatible} 个模型，值得在你的 Mac 上试试`
-                    : "此平台暂不支持适配评估"}
-                </strong>
-                <p>
-                  {config.platform === "apple"
-                    ? "基于内存与磁盘估算，非本机实测"
-                    : "仍可浏览模型，不能据此判断兼容性"}
-                </p>
-              </div>
-            </div>
-            <div className="device-bottom">
-              <span>
-                <ShieldCheck size={13} /> 仅在浏览器内计算
-              </span>
-              <button onClick={() => setConfig({ ...defaults })}>
-                恢复示例
-              </button>
-            </div>
-          </section>
+            )}
+          </div>
         </section>
+        {bridge.status && (
+          <LocalWorkbench bridge={bridge} onDeploy={requestDeploy} />
+        )}
         <section
           className="catalog-section"
           id="models"
@@ -746,9 +825,11 @@ export default function App() {
                 找到 <strong>{visible.length}</strong> 个模型{" "}
                 <span className="config-caption">
                   ·{" "}
-                  {config.platform === "apple"
-                    ? `${config.memoryGB} GB Mac 配置`
-                    : "当前平台未评估"}
+                  {detected
+                    ? `${detected.memoryGB.toFixed(0)} GB · 助手实机检测`
+                    : config.platform === "apple"
+                      ? `${config.memoryGB} GB · 手动示例配置`
+                      : "手动配置，当前平台未评估"}
                 </span>
               </p>
               <div>
@@ -783,6 +864,15 @@ export default function App() {
                       entry.model.id === featuredId && sort === "recommended"
                     }
                     onDetails={() => setSelectedId(entry.model.id)}
+                    onDeploy={() => requestDeploy(entry)}
+                    connected={bridge.phase === "connected"}
+                    deployDisabled={
+                      bridge.pending ||
+                      (!!bridge.status &&
+                        (!entry.result.compatible ||
+                          !bridge.status.device.supported ||
+                          bridge.status.busy))
+                    }
                   />
                 ))}
               </div>
@@ -813,9 +903,9 @@ export default function App() {
               <h2 id="guide-title">从找到它，到用上它。</h2>
               <p>网页帮你选，本地帮你跑。让 AI 留在自己的电脑里。</p>
             </div>
-            <a className="button secondary" href={download}>
+            <a className="button secondary" href={HELPER_DOWNLOAD} download>
               <Download size={16} />
-              下载本地运行包 <ArrowUpRight size={15} />
+              下载新版助手 <ArrowUpRight size={15} />
             </a>
           </div>
           <div className="guide-grid">
@@ -824,10 +914,10 @@ export default function App() {
               <div className="guide-icon">
                 <SlidersHorizontal size={24} />
               </div>
-              <h3>选好你的配置</h3>
+              <h3>首次启动助手</h3>
               <p>
-                在上方填写 Mac
-                的内存与磁盘空间，了解哪些模型适合你，无需安装任何东西。
+                在 Apple Silicon Mac 安装 Node.js 24，下载并解压新版助手，双击{" "}
+                <code>Start CanIRunAI Helper.command</code>。保持终端运行。
               </p>
             </article>
             <article>
@@ -835,10 +925,10 @@ export default function App() {
               <div className="guide-icon">
                 <Download size={24} />
               </div>
-              <h3>启动本地运行包</h3>
+              <h3>配对并自动检测</h3>
               <p>
-                在 Apple Silicon Mac 安装 Node.js 24，解压运行包，双击{" "}
-                <code>Start CanIRunAI.command</code>。首次启动需要联网安装依赖。
+                助手自动打开配对链接；按浏览器提示允许本地网络访问。未自动连接时输入
+                8 位配对码，网页即显示真实设备配置。
               </p>
             </article>
             <article>
@@ -848,16 +938,17 @@ export default function App() {
               </div>
               <h3>在自己的电脑上对话</h3>
               <p>
-                按启动器提示连接本地页面，安装运行时与模型。模型下载完成后，文字与图片推理在本机完成。
+                选择模型并确认部署。运行环境安装和模型切换均需同意，下载进度实时显示。模型就绪后，在本页工作台开始图文对话。
               </p>
             </article>
           </div>
           <div className="local-notice">
             <LockKeyhole size={20} />
             <p>
-              <strong>网站与本地运行包，各司其职。</strong>{" "}
-              网页不扫描本机、不后台下载，也不提供在线聊天。运行包需要
-              Node.js，尚不是独立的 macOS 安装应用。
+              <strong>首次安装授权，之后由本机助手执行。</strong>{" "}
+              网页不会静默安装本机软件。若浏览器不允许连接助手，也可使用{" "}
+              <a href={download}>原本地应用运行包</a>{" "}
+              在本地网页操作；旧包不适用于本页配对。
             </p>
             <a
               href={`${repository}/blob/main/README.md`}
@@ -910,6 +1001,13 @@ export default function App() {
           <span>Apple Silicon · Ollama · 在你的电脑上</span>
         </div>
       </footer>
+      {deployEntry && (
+        <DeployDialog
+          entry={deployEntry}
+          bridge={bridge}
+          onClose={() => setDeployId(null)}
+        />
+      )}
       {selected && (
         <ModelDetails entry={selected} onClose={() => setSelectedId(null)} />
       )}

@@ -29,7 +29,9 @@ export class Manager {
   chatBusy = false;
   writeQueue = Promise.resolve();
   hardware: DeviceProfile | null = null;
-  constructor(public dataDir: string) {}
+  private hardwareUpdatedAt = 0;
+  private hardwareRequest: Promise<DeviceProfile> | null = null;
+  constructor(public dataDir: string, private runtimeStarter = startRuntime) {}
   async init() {
     await mkdir(this.dataDir, { recursive: true, mode: 0o700 });
     try {
@@ -55,8 +57,20 @@ export class Manager {
       });
     return this.writeQueue;
   }
-  async device() {
-    return (this.hardware = await detectHardware(this.dataDir));
+  async device(force = true): Promise<DeviceProfile> {
+    if (this.hardwareRequest) return this.hardwareRequest;
+    if (!force && this.hardware && Date.now() - this.hardwareUpdatedAt < 10000)
+      return this.hardware;
+    this.hardwareRequest = detectHardware(this.dataDir, this.hardware).then((device) => {
+      this.hardware = device;
+      this.hardwareUpdatedAt = Date.now();
+      return device;
+    });
+    try {
+      return await this.hardwareRequest;
+    } finally {
+      this.hardwareRequest = null;
+    }
   }
   async installed() {
     try {
@@ -90,7 +104,7 @@ export class Manager {
       this.installed(),
       this.running(),
     ]);
-    const device = this.hardware ?? (await this.device());
+    const device = await this.device(false);
     return {
       version: "0.2.0",
       device,
@@ -118,10 +132,14 @@ export class Manager {
     d.logs = d.logs.slice(-60);
     await this.persist();
   }
-  async preflight(modelId: string, context?: number) {
+  async checkRuntimeVersion(modelId: string) {
     const rt = await runtimeStatus(), registered = getModel(modelId);
     if (rt.available && !runtimeCompatible(rt.version, registered.minimumRuntimeVersion))
       throw new LocalFailure("unsupported", `此模型需要 Ollama ${registered.minimumRuntimeVersion} 或更新版本（当前 ${rt.version}）。请更新本地 Ollama 后重试。`, "none");
+    return rt;
+  }
+  async preflight(modelId: string, context?: number) {
+    await this.checkRuntimeVersion(modelId);
     const model = getModel(modelId),
       device = await this.device(),
       loaded = await this.running(),
@@ -216,14 +234,18 @@ export class Manager {
       await this.stage(d, "checking", "Checking memory, storage, runtime and model revision.");
       await this.preflight(d.modelId, d.plan.context);
       try {
-        await startRuntime(this.dataDir);
+        await this.runtimeStarter(this.dataDir);
       } catch {
         throw new LocalFailure(
           "runtime_missing",
-          "Install the verified Ollama runtime to continue.",
+          "Ollama could not start. Confirm installation of the verified runtime in CanIRunAI, or start your existing Ollama and retry.",
           "install_runtime",
         );
       }
+      // Preflight cannot inspect the version of a stopped daemon.
+      const rt = await this.checkRuntimeVersion(d.modelId);
+      if (!rt.available)
+        throw new LocalFailure("runtime_offline", "Ollama stopped responding. Start it and retry.");
       const model = getModel(d.modelId),
         v = model.variants.find((v) => v.id === d.plan.variantId)!;
       const tags = await ollama("/api/tags");
@@ -397,8 +419,17 @@ export class Manager {
       throw new LocalFailure("busy", "Another operation is in progress.", "none");
     this.busy = true;
     try {
+      if (!(await this.device()).supported)
+        throw new LocalFailure("unsupported", "运行环境安装仅支持 Apple Silicon Mac。", "none");
+      try {
+        await this.runtimeStarter(this.dataDir);
+        const existing = await runtimeStatus();
+        if (existing.available) return existing;
+      } catch {}
       await installRuntime(this.dataDir);
-      return await runtimeStatus();
+      const installed = await runtimeStatus();
+      if (!installed.available) throw new LocalFailure("runtime_offline", "安装后 Ollama 未就绪，请检查助手终端。", "none");
+      return installed;
     } finally {
       this.busy = false;
     }

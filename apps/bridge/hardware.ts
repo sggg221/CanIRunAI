@@ -12,14 +12,15 @@ async function command(file: string, args: string[]) {
     return "";
   }
 }
-export async function detectHardware(dataDir: string): Promise<DeviceProfile> {
+export async function detectHardware(dataDir: string, previous?: DeviceProfile | null): Promise<DeviceProfile> {
   await mkdir(dataDir, { recursive: true, mode: 0o700 });
   const disk = await statfs(dataDir);
   const supported = os.platform() === "darwin" && os.arch() === "arm64";
   let hw: any = {},
     gpu: any = {},
     version = os.release();
-  if (os.platform() === "darwin") {
+  // Hardware identity is stable for the helper process; memory and disk are not.
+  if (os.platform() === "darwin" && !previous) {
     const [prof, ver] = await Promise.all([
       command("/usr/sbin/system_profiler", ["SPHardwareDataType", "SPDisplaysDataType", "-json"]),
       command("/usr/bin/sw_vers", ["-productVersion"]),
@@ -43,17 +44,17 @@ export async function detectHardware(dataDir: string): Promise<DeviceProfile> {
   const chip = hw.chip_type || os.cpus()[0]?.model || "Unknown";
   return DeviceProfileSchema.parse({
     os: os.platform(),
-    osVersion: version,
+    osVersion: previous?.osVersion ?? version,
     architecture: os.arch(),
     supported,
-    model: hw.machine_model ?? "Unknown",
-    chip,
+    model: previous?.model ?? hw.machine_model ?? "Unknown",
+    chip: previous?.chip ?? chip,
     cpuCores: os.cpus().length,
-    gpuCores: Number(gpu.sppci_cores) || null,
+    gpuCores: previous?.gpuCores ?? (Number(gpu.sppci_cores) || null),
     memoryGB: os.totalmem() / G,
     freeMemoryGB: available,
     diskFreeGB: (disk.bavail * disk.bsize) / G,
-    metal: gpu.spdisplays_metal ?? null,
+    metal: previous?.metal ?? gpu.spdisplays_metal ?? null,
     neuralEngine: null,
     bandwidthGBs: null,
     powerMode: null,
