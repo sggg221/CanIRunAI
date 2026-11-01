@@ -402,7 +402,8 @@ def _probe_websocket():
 
 if os.getenv("SHARE_DIAGNOSTICS", "0") == "1":
     threading.Thread(target=_diagnostic_live_info, daemon=True).start()
-    threading.Thread(target=_probe_websocket, daemon=True).start()
+    if os.getenv("WS_SMOKE_TEST", "0") == "1":
+        threading.Thread(target=_probe_websocket, daemon=True).start()
 
 
 if __name__ == "__main__":
