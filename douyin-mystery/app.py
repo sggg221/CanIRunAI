@@ -6,7 +6,10 @@ import threading
 import time
 from collections import deque
 from functools import wraps
-from urllib.parse import urlsplit, urljoin, parse_qs
+from urllib.parse import urlsplit, urljoin, parse_qs, urlencode
+from websocket import WebSocketApp
+from builder.header import HeaderBuilder
+from utils.dy_util import generate_signature
 import requests
 from dy_apis.douyin_api import DouyinAPI
 from flask import Flask, jsonify, request, send_file
@@ -178,7 +181,7 @@ def _public_live_info(auth, live_id):
     user_match = re.search(r'"user_unique_id"\s*:\s*"?(\d{5,30})', html)
     if not room_match or not user_match:
         return None
-    return {"room_id": room_match.group(1), "user_id": user_match.group(1)}
+    return {"room_id": room_match.group(1), "user_id": user_match.group(1), "ttwid": result.cookies.get("ttwid", "")}
 
 
 # Correct the upstream hunter's auth=None invocation without changing its WebSocket machinery.
@@ -349,6 +352,61 @@ def _probe_websocket():
                 self.messages = 0
                 self.error_type = ""
                 self.error_brief = ""
+
+            def connect(self):
+                info = DouyinAPI.get_live_info(None, self.live_id)
+                if not isinstance(info, dict) or not info.get("room_id"):
+                    raise RuntimeError("public_room_metadata_unavailable")
+                room_id = info["room_id"]
+                user_id = info["user_id"]
+                params = {
+                    "app_name": "douyin_web",
+                    "version_code": "180800",
+                    "webcast_sdk_version": "1.0.15",
+                    "update_version_code": "1.0.15",
+                    "compress": "gzip",
+                    "device_platform": "web",
+                    "cookie_enabled": "true",
+                    "screen_width": "1707",
+                    "screen_height": "960",
+                    "browser_language": "zh-CN",
+                    "browser_platform": "Win32",
+                    "browser_name": "Mozilla",
+                    "browser_version": HeaderBuilder.ua.split("Mozilla/")[-1],
+                    "browser_online": "true",
+                    "tz_name": "Asia/Shanghai",
+                    "cursor": "-1",
+                    "host": "https://live.douyin.com",
+                    "aid": "6383",
+                    "live_id": "1",
+                    "did_rule": "3",
+                    "endpoint": "live_pc",
+                    "support_wrds": "1",
+                    "user_unique_id": user_id,
+                    "im_path": "/webcast/im/fetch/",
+                    "identity": "audience",
+                    "need_persist_msg_count": "15",
+                    "insert_task_id": "",
+                    "live_reason": "",
+                    "room_id": room_id,
+                    "heartbeatDuration": "0",
+                    "signature": generate_signature(room_id, user_id),
+                }
+                endpoint = "wss://webcast5-ws-web-lq.douyin.com/webcast/im/push/v2/?"
+                headers = ["User-Agent: " + SESSION_HEADERS["User-Agent"]]
+                if info.get("ttwid"):
+                    headers.append("Cookie: ttwid=" + info["ttwid"])
+                app.logger.warning("ws-probe variant=modern_ws_host cookie_present=%s",
+                                   bool(info.get("ttwid")))
+                self.ws = WebSocketApp(
+                    endpoint + urlencode(params),
+                    header=headers,
+                    on_open=self.on_open,
+                    on_message=self.on_message,
+                    on_error=self.on_error,
+                    on_close=self.on_close,
+                )
+                self.ws.run_forever(origin="https://live.douyin.com")
 
             def on_open(self, ws):
                 self.opened = True
