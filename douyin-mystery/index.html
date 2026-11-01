@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0b0e">
+<title>神秘人观察 · 抖音直播</title>
+<style>
+:root{color-scheme:dark;--bg:#090b0f;--panel:#13161d;--line:#2a2e39;--muted:#9098a7;--pink:#ff486c}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 6% -4%,#2b141e 0,transparent 45%),var(--bg);color:#f3f4f7;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}
+main{max-width:950px;margin:auto;padding:43px 19px 85px}
+.eyebrow{color:#ff6384;font-size:12px;font-weight:800;letter-spacing:.15em}
+h1{font-size:clamp(30px,5vw,43px);letter-spacing:-1.4px;line-height:1.2;margin:8px 0 12px}
+.sub{color:var(--muted);max-width:670px;margin:0 0 30px}
+.panel,.stat,.entry{background:var(--panel);border:1px solid var(--line);border-radius:17px}
+.panel{padding:23px}
+.inputs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;margin-bottom:7px;color:#bac0ca;font-size:13px}
+input{width:100%;padding:14px;color:#f6f7f9;font:inherit;outline:0;background:#0c1016;border:1px solid #363d4b;border-radius:11px}
+input:focus{border-color:#fb5e86}
+.controls{display:flex;align-items:center;flex-wrap:wrap;gap:11px;margin-top:20px}
+button{padding:11px 20px;border:0;border-radius:10px;color:#fff;background:#363c49;cursor:pointer;font:inherit;font-weight:700}
+button.primary{background:var(--pink)}
+button:disabled{opacity:.5;cursor:wait}
+.status{font-size:13px;color:#c0c7d1}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#7e8696;margin:0 7px 0 3px}
+.dot.on{background:#38d995;box-shadow:0 0 0 4px #38d99518}
+.dot.wait{background:#dfb258}
+.small{font-size:12px;color:var(--muted);margin:12px 0 0}
+.alert{white-space:pre-wrap;color:#ffd9e3;background:#42202e;border:1px solid #79354e;border-radius:9px;padding:10px 13px;margin-top:14px}
+.preview{display:none;background:#1a2837;color:#d4e3f3;padding:14px;border-radius:11px;border:1px solid #345272;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 27px}
+.stat{padding:18px 19px}
+.stat b{display:block;font-size:28px;font-variant-numeric:tabular-nums;font-weight:750}
+.stat span{font-size:12px;color:var(--muted)}
+.heading{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:13px}
+h2{margin:0;font-size:17px}
+.heading small{color:var(--muted)}
+.entry{display:grid;grid-template-columns:1fr auto;gap:14px;padding:17px 19px;margin-bottom:9px}
+.entry strong{font-size:16px}
+.entry .tag{display:inline-block;background:#4d2834;color:#ff9cb0;border-radius:6px;padding:1px 8px;margin-left:10px;font-size:11px}
+.details{color:#a9b1bd;overflow-wrap:anywhere;font-size:12px;margin-top:7px}
+time{color:var(--muted);font-size:12px}
+.empty{padding:50px 12px;text-align:center;color:var(--muted);border:1px dashed #424854;border-radius:16px}
+footer{font-size:12px;color:var(--muted);margin-top:35px}
+@media(max-width:640px){main{padding:30px 14px 65px}.panel{padding:17px}.inputs{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:13px}.stat b{font-size:23px}.entry{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<div class="eyebrow">DOUYIN · LIVE OBSERVER</div>
+<h1>直播间神秘人观察</h1>
+<p class="sub">只保留一个功能：观察直播间匿名用户事件。显示协议返回的昵称和账号标识，不保证识别匿名用户的真实抖音账号或现实身份。</p>
+<div id="preview" class="preview">当前打开的是 GitHub Pages 静态预览。实时监听需要先将仓库中的 douyin-mystery 目录部署到 Railway，然后打开 Railway 的网址。</div>
+<section class="panel">
+  <div class="inputs">
+    <div><label for="room">直播间链接 / 数字房间号</label><input id="room" placeholder="https://live.douyin.com/123456789" autocomplete="off" spellcheck="false"></div>
+    <div><label for="token">私有访问口令</label><input id="token" type="password" placeholder="DASHBOARD_TOKEN" autocomplete="off"></div>
+  </div>
+  <div class="controls">
+    <button class="primary" id="start">开始监听</button>
+    <button id="stop">停止监听</button>
+    <span class="status"><i id="dot" class="dot"></i><span id="status">未连接</span></span>
+  </div>
+  <p class="small">口令仅用于当前网页会话，不保存在浏览器本地。请使用有权访问的直播间，且确保正在开播。</p>
+  <div id="error" class="alert" role="alert" hidden></div>
+</section>
+<div class="stats">
+  <div class="stat"><b id="count">0</b><span>匿名事件</span></div>
+  <div class="stat"><b id="total">0</b><span>接收进场事件</span></div>
+  <div class="stat"><b id="activeRoom">—</b><span>监听房间</span></div>
+</div>
+<div class="heading"><h2>实时记录</h2><small>每 3 秒刷新</small></div>
+<div id="entries" aria-live="polite"><div class="empty">输入直播间和访问口令，点击开始监听。</div></div>
+<footer>说明：secUid 是平台账号标识，不等于真实身份。数据可能脱敏、缺失或过期。该工具只保留当前服务器内存中的近期记录，重启会清空。</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const staticPreview=location.hostname.endsWith(".github.io");
+if(staticPreview)$("preview").style.display="block";
+function error(text){const el=$("error");el.hidden=!text;el.textContent=text||""}
+function element(tag,text,cls){const el=document.createElement(tag);if(text!=null)el.textContent=String(text);if(cls)el.className=cls;return el}
+async function call(path,method,body){
+ const token=$("token").value.trim();
+ if(!token)throw Error("请先填写访问口令");
+ const headers={"Authorization":"Bearer "+token};
+ if(body)headers["Content-Type"]="application/json";
+ const response=await fetch(path,{method:method||"GET",headers,body:body?JSON.stringify(body):undefined,cache:"no-store"});
+ let data;
+ try{data=await response.json()}catch{throw Error("后端未连接：GitHub Pages 不能执行 Python 服务")}
+ if(!response.ok)throw Error(data.error||"请求失败："+response.status);
+ return data;
+}
+function render(data){
+ const stateText={idle:"未连接",starting:"连接中",listening:"监听中",stopped:"已停止"};
+ $("status").textContent=stateText[data.status]||data.status;
+ $("dot").className="dot"+(data.connected?" on":data.status==="starting"?" wait":"");
+ $("count").textContent=data.count||0;
+ $("total").textContent=data.total||0;
+ $("activeRoom").textContent=data.room||"—";
+ error(data.error||"");
+ const root=$("entries");root.replaceChildren();
+ if(!data.events||!data.events.length){
+   root.append(element("div",data.status==="listening"?"已连接，等待匿名事件…":"暂无监听记录","empty"));return;
+ }
+ for(const e of data.events){
+   const article=element("article",null,"entry");
+   const main=element("div");
+   main.append(element("strong",e.display||"神秘人"));
+   main.append(element("span",e.action||"事件","tag"));
+   const meta=[];
+   if(e.nickname)meta.push("协议昵称："+e.nickname);
+   if(e.sec_uid)meta.push("secUid："+e.sec_uid);
+   if(e.level)meta.push("消费等级："+e.level);
+   main.append(element("div",meta.join("　·　")||"未提供可用账号标识","details"));
+   article.append(main,element("time",new Date((e.at||0)*1000).toLocaleString("zh-CN")));
+   root.append(article);
+ }
+}
+async function refresh(){
+ if(staticPreview||!$("token").value.trim())return;
+ try{render(await call("/api/status"))}catch(e){error(e.message)}
+}
+$("start").onclick=async()=>{
+ if(staticPreview){error("这是静态预览，请打开 Railway 部署后的网址");return}
+ $("start").disabled=true;
+ try{await call("/api/start","POST",{room:$("room").value.trim()});await refresh()}
+ catch(e){error(e.message)}finally{$("start").disabled=false}
+};
+$("stop").onclick=async()=>{
+ if(staticPreview){error("这是静态预览，请打开 Railway 网址");return}
+ try{await call("/api/stop","POST");await refresh()}catch(e){error(e.message)}
+};
+setInterval(refresh,3000);
+</script>
+</body>
+</html>
