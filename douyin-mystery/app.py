@@ -121,54 +121,6 @@ def get_room(raw):
     return None
 
 
-def _debug_default_share():
-    """One-time diagnostics for the user's configured public share link.
-    Never log full HTML, tokens, cookies or unrelated user identifiers.
-    """
-    url = os.getenv("ROOM_SHARE_DEFAULT", "").strip()
-    if not url or not _safe_url(url):
-        return
-    try:
-        for hop in range(8):
-            if not _safe_url(url):
-                app.logger.warning("share-resolve hop=%d rejected off-domain host", hop)
-                return
-            parsed = urlsplit(url)
-            with requests.get(url, headers=SESSION_HEADERS, timeout=(4, 10),
-                              allow_redirects=False, stream=True) as response:
-                redirect = response.headers.get("Location", "")
-                app.logger.warning(
-                    "share-resolve hop=%d host=%s path_type=%s status=%d redirect_host=%s",
-                    hop, parsed.hostname,
-                    "reflow" if ROOM_PATH.search(parsed.path) else "other",
-                    response.status_code,
-                    urlsplit(urljoin(url, redirect)).hostname if redirect else "-"
-                )
-                if redirect:
-                    candidate = urljoin(url, redirect)
-                    if not _safe_url(candidate):
-                        return
-                    url = candidate
-                    continue
-                response.raw.decode_content = True
-                body = response.raw.read(2097152).decode("utf-8", errors="replace").replace("\\", "")
-                app.logger.warning(
-                    "share-resolve final encoding=%s type=%s decoded_len=%d html_like=%s owner_short_id=%s room_id_found=%s web_rid=%s",
-                    response.headers.get("Content-Encoding", "-"), response.headers.get("Content-Type", "-")[:35], len(body),
-                    body.lstrip().startswith(("<", "{")),
-                    bool(OWNER_SHORT_ID.search(body)),
-                    bool(re.search(r'"roomId"\s*:', body)),
-                    bool(WEBRID_IN_HTML.search(body)),
-                )
-            return
-    except requests.RequestException as exc:
-        app.logger.warning("share-resolve request failure: %s", type(exc).__name__)
-
-
-if os.getenv("SHARE_DIAGNOSTICS", "0") == "1" and os.getenv("ROOM_SHARE_DEFAULT"):
-    threading.Thread(target=_debug_default_share, daemon=True).start()
-
-
 def _public_live_info(auth, live_id):
     """The upstream stand-alone hunter passes auth=None, which its newer API rejects.
     Read the publicly accessible live page without a cookie instead.
@@ -190,10 +142,68 @@ DouyinAPI.get_live_info = staticmethod(_public_live_info)
 def limited(value, max_length=180):
     return str(value or "").strip()[:max_length]
 
+def _connect_live(self):
+    info = DouyinAPI.get_live_info(None, self.live_id)
+    if not isinstance(info, dict) or not info.get("room_id"):
+        raise RuntimeError("public_room_metadata_unavailable")
+    room_id = info["room_id"]
+    user_id = info["user_id"]
+    params = {
+        "app_name": "douyin_web",
+        "version_code": "180800",
+        "webcast_sdk_version": "1.0.15",
+        "update_version_code": "1.0.15",
+        "compress": "gzip",
+        "device_platform": "web",
+        "cookie_enabled": "true",
+        "screen_width": "1707",
+        "screen_height": "960",
+        "browser_language": "zh-CN",
+        "browser_platform": "Win32",
+        "browser_name": "Mozilla",
+        "browser_version": HeaderBuilder.ua.split("Mozilla/")[-1],
+        "browser_online": "true",
+        "tz_name": "Asia/Shanghai",
+        "cursor": "-1",
+        "host": "https://live.douyin.com",
+        "aid": "6383",
+        "live_id": "1",
+        "did_rule": "3",
+        "endpoint": "live_pc",
+        "support_wrds": "1",
+        "user_unique_id": user_id,
+        "im_path": "/webcast/im/fetch/",
+        "identity": "audience",
+        "need_persist_msg_count": "15",
+        "insert_task_id": "",
+        "live_reason": "",
+        "room_id": room_id,
+        "heartbeatDuration": "0",
+        "signature": generate_signature(room_id, user_id),
+    }
+    endpoint = "wss://webcast5-ws-web-lq.douyin.com/webcast/im/push/v2/?"
+    headers = ["User-Agent: " + SESSION_HEADERS["User-Agent"]]
+    if info.get("ttwid"):
+        headers.append("Cookie: ttwid=" + info["ttwid"])
+    self.ws = WebSocketApp(
+        endpoint + urlencode(params),
+        header=headers,
+        on_open=self.on_open,
+        on_message=self.on_message,
+        on_error=self.on_error,
+        on_close=self.on_close,
+    )
+    self.ws.run_forever(origin="https://live.douyin.com")
+
+
+
 class Observer(MysteryHunter):
     def __init__(self, room):
         super().__init__(room, verbose=False)
         self.opened = False
+
+    def connect(self):
+        return _connect_live(self)
 
     def on_open(self, ws):
         self.opened = True
@@ -316,153 +326,6 @@ def stop():
         except Exception:
             pass
     return jsonify(ok=True)
-
-def _diagnostic_live_info():
-    """Test the public preset with no private identifiers in logs."""
-    preset = os.getenv("ROOM_SHARE_DEFAULT", "")
-    if not preset:
-        return
-    try:
-        web_rid = get_room(preset)
-        app.logger.warning("share-self-test shortlink_resolved=%s", bool(web_rid))
-        live_info = _public_live_info(None, web_rid) if web_rid else None
-        app.logger.warning("share-self-test live_info_valid=%s", bool(
-            isinstance(live_info, dict) and live_info.get("room_id") and live_info.get("user_id")
-        ))
-    except requests.RequestException as exc:
-        app.logger.warning("share-self-test request_error=%s", type(exc).__name__)
-    except Exception as exc:
-        app.logger.warning("share-self-test error=%s", type(exc).__name__)
-
-
-def _probe_websocket():
-    """Bounded test of the live stream; only publish aggregate event counts in logs."""
-    raw = os.getenv("ROOM_SHARE_DEFAULT", "")
-    try:
-        room = get_room(raw)
-        if not room:
-            app.logger.warning("ws-probe result=no_room")
-            return
-
-        class Probe(MysteryHunter):
-            def __init__(self, rid):
-                super().__init__(rid, verbose=False)
-                self.opened = False
-                self.frames = 0
-                self.messages = 0
-                self.error_type = ""
-                self.error_brief = ""
-
-            def connect(self):
-                info = DouyinAPI.get_live_info(None, self.live_id)
-                if not isinstance(info, dict) or not info.get("room_id"):
-                    raise RuntimeError("public_room_metadata_unavailable")
-                room_id = info["room_id"]
-                user_id = info["user_id"]
-                params = {
-                    "app_name": "douyin_web",
-                    "version_code": "180800",
-                    "webcast_sdk_version": "1.0.15",
-                    "update_version_code": "1.0.15",
-                    "compress": "gzip",
-                    "device_platform": "web",
-                    "cookie_enabled": "true",
-                    "screen_width": "1707",
-                    "screen_height": "960",
-                    "browser_language": "zh-CN",
-                    "browser_platform": "Win32",
-                    "browser_name": "Mozilla",
-                    "browser_version": HeaderBuilder.ua.split("Mozilla/")[-1],
-                    "browser_online": "true",
-                    "tz_name": "Asia/Shanghai",
-                    "cursor": "-1",
-                    "host": "https://live.douyin.com",
-                    "aid": "6383",
-                    "live_id": "1",
-                    "did_rule": "3",
-                    "endpoint": "live_pc",
-                    "support_wrds": "1",
-                    "user_unique_id": user_id,
-                    "im_path": "/webcast/im/fetch/",
-                    "identity": "audience",
-                    "need_persist_msg_count": "15",
-                    "insert_task_id": "",
-                    "live_reason": "",
-                    "room_id": room_id,
-                    "heartbeatDuration": "0",
-                    "signature": generate_signature(room_id, user_id),
-                }
-                endpoint = "wss://webcast5-ws-web-lq.douyin.com/webcast/im/push/v2/?"
-                headers = ["User-Agent: " + SESSION_HEADERS["User-Agent"]]
-                if info.get("ttwid"):
-                    headers.append("Cookie: ttwid=" + info["ttwid"])
-                app.logger.warning("ws-probe variant=modern_ws_host cookie_present=%s",
-                                   bool(info.get("ttwid")))
-                self.ws = WebSocketApp(
-                    endpoint + urlencode(params),
-                    header=headers,
-                    on_open=self.on_open,
-                    on_message=self.on_message,
-                    on_error=self.on_error,
-                    on_close=self.on_close,
-                )
-                self.ws.run_forever(origin="https://live.douyin.com")
-
-            def on_open(self, ws):
-                self.opened = True
-
-            def on_error(self, ws, error):
-                self.error_type = type(error).__name__
-                # Only print type and coarse cause, not packet contents or credentials.
-                self.error_brief = str(error).split("?")[0][:100]
-
-            def on_close(self, ws, code, message):
-                pass
-
-            def on_message(self, ws, payload):
-                self.frames += 1
-                try:
-                    frame = Live_pb2.PushFrame()
-                    frame.ParseFromString(payload)
-                    unpacked = gzip.decompress(frame.payload)
-                    message = Live_pb2.LiveResponse()
-                    message.ParseFromString(unpacked)
-                    self.messages += len(message.messagesList)
-                except Exception:
-                    pass
-
-        probe = Probe(room)
-
-        def stop_probe():
-            if probe.ws:
-                try:
-                    probe.ws.close()
-                except Exception:
-                    pass
-
-        timer = threading.Timer(22, stop_probe)
-        timer.daemon = True
-        timer.start()
-        app.logger.warning("ws-probe started")
-        try:
-            probe.connect()
-        finally:
-            timer.cancel()
-        app.logger.warning(
-            "ws-probe result opened=%s frames=%d messages=%d error_type=%s error_brief=%s",
-            probe.opened, probe.frames, probe.messages, probe.error_type or "-",
-            probe.error_brief or "-",
-        )
-    except Exception as exc:
-        app.logger.warning("ws-probe failure type=%s message=%s",
-                           type(exc).__name__, str(exc).split("?")[0][:110])
-
-
-if os.getenv("SHARE_DIAGNOSTICS", "0") == "1":
-    threading.Thread(target=_diagnostic_live_info, daemon=True).start()
-    if os.getenv("WS_SMOKE_TEST", "0") == "1":
-        threading.Thread(target=_probe_websocket, daemon=True).start()
-
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5000")))
