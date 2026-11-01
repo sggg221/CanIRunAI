@@ -30,34 +30,51 @@ def protected(func):
         return func(*args, **kwargs)
     return check
 
-ALLOWED_HOSTS = {"v.douyin.com", "live.douyin.com", "www.douyin.com", "douyin.com"}
+# Restrict network requests to Douyin-operated domains.
+# Mobile share links normally redirect via webcast.amemv.com/douyin/webcast/reflow/<room_id>.
+ALLOWED_HOSTS = {
+    "v.douyin.com", "live.douyin.com", "www.douyin.com", "douyin.com",
+    "webcast.amemv.com", "www.iesdouyin.com", "iesdouyin.com"
+}
 SHARE_LINK_RE = re.compile(r"https?://[^\s<>\"'，。]+", re.I)
-SESSION_HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+SESSION_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "zh-CN,zh;q=0.9",
+    "Referer": "https://www.douyin.com/"
+}
+OWNER_SHORT_ID = re.compile(r'"owner"\s*:\s*\{[^{}]{0,5000}?"shortId"\s*:\s*"?(\d{5,30})', re.S)
+ROOM_PATH = re.compile(r"/douyin/webcast/reflow/(\d{5,30})(?:/|$)")
+WEBRID_IN_HTML = re.compile(r'"web_rid"\s*:\s*"?(\d{5,30})', re.I)
 
 
-def room_from_url(url):
-    """Accept only Douyin-controlled HTTPS links; never accept arbitrary redirect targets."""
+def _safe_url(url):
     parsed = urlsplit(url)
-    if parsed.scheme != "https" or parsed.hostname not in ALLOWED_HOSTS:
+    return parsed.scheme == "https" and parsed.hostname in ALLOWED_HOSTS and parsed.port in (None, 443)
+
+
+def _room_from_url(url):
+    parsed = urlsplit(url)
+    if not _safe_url(url):
         return None
-    for key in ("room_id", "roomId", "web_rid", "webRid", "live_id"):
-        for item in parse_qs(parsed.query).get(key, []):
-            if re.fullmatch(r"\d{5,30}", item):
-                return item
+    params = parse_qs(parsed.query)
+    # A browser live link has an account-stable web_rid.
+    for key in ("web_rid", "webRid"):
+        for value in params.get(key, []):
+            if re.fullmatch(r"\d{5,30}", value):
+                return value
     parts = [p for p in parsed.path.split("/") if p]
-    if not parts:
-        return None
-    last = parts[-1]
-    if re.fullmatch(r"\d{5,30}", last):
-        if parsed.hostname == "live.douyin.com" or (len(parts) > 1 and parts[-2] == "live"):
-            return last
+    if parsed.hostname == "live.douyin.com" and len(parts) == 1:
+        if re.fullmatch(r"\d{5,30}", parts[0]):
+            return parts[0]
+    # Do not treat reflow/<roomId> as web_rid; that is an event-specific room ID.
     return None
 
 
 def get_room(raw):
-    """Parse a numeric room, a Douyin live URL or a share message with a short link."""
+    """Resolve share text or Douyin short link to a stable live.douyin.com web_rid."""
     raw = str(raw or "").strip()
-    if len(raw) > 2000:
+    if len(raw) > 2500:
         return None
     if re.fullmatch(r"\d{5,30}", raw):
         return raw
@@ -65,27 +82,84 @@ def get_room(raw):
     if not match:
         return None
     url = match.group(0).rstrip("!！?？,，.;；)]）")
-    for _ in range(5):
-        room = room_from_url(url)
-        if room:
-            return room
-        parsed = urlsplit(url)
-        if parsed.scheme != "https" or parsed.hostname not in ALLOWED_HOSTS:
+    if not _safe_url(url):
+        return None
+    saw_reflow = False
+    for hop in range(8):
+        account_id = _room_from_url(url)
+        if account_id:
+            return account_id
+        if not _safe_url(url):
             return None
-        # Do not request arbitrary URLs. Redirects are followed only after host validation.
-        with requests.get(url, headers=SESSION_HEADERS, timeout=(4, 9),
+        parsed = urlsplit(url)
+        if ROOM_PATH.search(parsed.path) and parsed.hostname == "webcast.amemv.com":
+            saw_reflow = True
+        with requests.get(url, headers=SESSION_HEADERS, timeout=(4, 10),
                           allow_redirects=False, stream=True) as response:
-            redirect = response.headers.get("Location", "")
+            redirect = response.headers.get("Location")
             if redirect:
-                url = urljoin(url, redirect)
+                candidate = urljoin(url, redirect)
+                if not _safe_url(candidate):
+                    return None
+                url = candidate
                 continue
-            if parsed.hostname == "live.douyin.com" and response.ok:
-                html = response.raw.read(550000).decode("utf-8", errors="ignore").replace("\\", "")
-                matched = re.search(r'"roomId"\s*:\s*"?(\d{5,30})', html)
-                if matched:
-                    return matched.group(1)
+            body = response.raw.read(1048576).decode("utf-8", errors="replace")
+            if saw_reflow or parsed.hostname == "live.douyin.com":
+                # Douyin embeds JSON in both escaped and unescaped form.
+                normalized = body.replace("\\", "")
+                owner = OWNER_SHORT_ID.search(normalized)
+                if owner:
+                    return owner.group(1)
+                stable = WEBRID_IN_HTML.search(normalized)
+                if stable:
+                    return stable.group(1)
         return None
     return None
+
+
+def _debug_default_share():
+    """One-time diagnostics for the user's configured public share link.
+    Never log full HTML, tokens, cookies or unrelated user identifiers.
+    """
+    url = os.getenv("ROOM_SHARE_DEFAULT", "").strip()
+    if not url or not _safe_url(url):
+        return
+    try:
+        for hop in range(8):
+            if not _safe_url(url):
+                app.logger.warning("share-resolve hop=%d rejected off-domain host", hop)
+                return
+            parsed = urlsplit(url)
+            with requests.get(url, headers=SESSION_HEADERS, timeout=(4, 10),
+                              allow_redirects=False, stream=True) as response:
+                redirect = response.headers.get("Location", "")
+                app.logger.warning(
+                    "share-resolve hop=%d host=%s path_type=%s status=%d redirect_host=%s",
+                    hop, parsed.hostname,
+                    "reflow" if ROOM_PATH.search(parsed.path) else "other",
+                    response.status_code,
+                    urlsplit(urljoin(url, redirect)).hostname if redirect else "-"
+                )
+                if redirect:
+                    candidate = urljoin(url, redirect)
+                    if not _safe_url(candidate):
+                        return
+                    url = candidate
+                    continue
+                body = response.raw.read(1048576).decode("utf-8", errors="replace").replace("\\", "")
+                app.logger.warning(
+                    "share-resolve final owner_short_id=%s room_id_found=%s web_rid=%s",
+                    bool(OWNER_SHORT_ID.search(body)),
+                    bool(re.search(r'"roomId"\s*:', body)),
+                    bool(WEBRID_IN_HTML.search(body)),
+                )
+            return
+    except requests.RequestException as exc:
+        app.logger.warning("share-resolve request failure: %s", type(exc).__name__)
+
+
+if os.getenv("ROOM_SHARE_DEFAULT"):
+    threading.Thread(target=_debug_default_share, daemon=True).start()
 
 
 def _public_live_info(auth, live_id):
