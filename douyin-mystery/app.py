@@ -314,5 +314,27 @@ def stop():
             pass
     return jsonify(ok=True)
 
+def _diagnostic_live_info():
+    """Test the public preset with no private identifiers in logs."""
+    preset = os.getenv("ROOM_SHARE_DEFAULT", "")
+    if not preset:
+        return
+    try:
+        web_rid = get_room(preset)
+        app.logger.warning("share-self-test shortlink_resolved=%s", bool(web_rid))
+        live_info = _public_live_info(None, web_rid) if web_rid else None
+        app.logger.warning("share-self-test live_info_valid=%s", bool(
+            isinstance(live_info, dict) and live_info.get("room_id") and live_info.get("user_id")
+        ))
+    except requests.RequestException as exc:
+        app.logger.warning("share-self-test request_error=%s", type(exc).__name__)
+    except Exception as exc:
+        app.logger.warning("share-self-test error=%s", type(exc).__name__)
+
+
+if os.getenv("SHARE_DIAGNOSTICS", "0") == "1":
+    threading.Thread(target=_diagnostic_live_info, daemon=True).start()
+
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5000")))
