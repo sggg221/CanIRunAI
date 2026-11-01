@@ -31,6 +31,8 @@ jobs:
       - run: npm test
       - run: npm run check
       - run: npm run site:build
+      - name: Include standalone Douyin observer static preview
+        run: mkdir -p apps/site/dist/douyin-mystery && cp douyin-mystery/index.html apps/site/dist/douyin-mystery/index.html
       - uses: actions/upload-artifact@v4
         with:
           name: website
