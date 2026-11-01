@@ -192,6 +192,10 @@ def index():
 def health():
     return jsonify(ok=True)
 
+@app.get("/api/default-room")
+def default_room():
+    return jsonify(room=os.getenv("ROOM_SHARE_DEFAULT", ""))
+
 @app.get("/api/status")
 @protected
 def status():
