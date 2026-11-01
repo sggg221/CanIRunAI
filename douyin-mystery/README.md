@@ -1,5 +1,19 @@
 # 抖音直播神秘人观察页
 
+## 不用 Railway：改用 Render（一键 Blueprint）
+
+GitHub 仓库根目录已经准备好 [render.yaml](../render.yaml)，所以不需要复制项目或填写构建命令。
+
+1. 打开 https://dashboard.render.com/blueprints ，用 GitHub 登录 Render。
+2. 点击 **New Blueprint**，连接 **sggg221/CanIRunAI**（Branch: main）。
+3. Blueprint Path 保持 `render.yaml`；页面会识别一个免费 Docker Web Service，根目录 `douyin-mystery`。
+4. 按提示在 **DASHBOARD_TOKEN** 输入自己生成的、至少 16 字符的私有口令（请勿发给其他人）。
+5. 点击 **Deploy Blueprint**，等服务状态显示 `Live`，打开分配的 `*.onrender.com` 网址。
+6. 在网页里输入直播间和前一步的口令，点击 **开始监听**。
+
+Render 免费 Web Service 在约 15 分钟没有入站访问时可能休眠，重新访问需要冷启动；休眠、服务器重启会清空本次监听记录。建议仅用于测试，不适合作为全天候采集服务。
+
+
 本目录是一个**独立单功能网页**，在直播进行中读取 WebSocket 消息里标注为神秘人或匿名用户的事件，展示协议返回的昵称、secUid、消费等级和进场/弹幕/礼物事件。不能保证这些字段是真实账号，更不能得出现实身份。没有跨房间关联或去匿名化数据库。
 
 ## 部署到 Railway
