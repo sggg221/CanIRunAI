@@ -1,0 +1,13 @@
+# Render Blueprint for the standalone Douyin mystery event observer.
+# No credentials are stored in this public repository.
+services:
+  - type: web
+    name: douyin-mystery-observer
+    runtime: docker
+    plan: free
+    region: singapore
+    rootDir: douyin-mystery
+    healthCheckPath: /healthz
+    envVars:
+      - key: DASHBOARD_TOKEN
+        sync: false
