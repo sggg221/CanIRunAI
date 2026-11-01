@@ -158,7 +158,7 @@ def _debug_default_share():
         app.logger.warning("share-resolve request failure: %s", type(exc).__name__)
 
 
-if os.getenv("ROOM_SHARE_DEFAULT"):
+if os.getenv("SHARE_DIAGNOSTICS", "0") == "1" and os.getenv("ROOM_SHARE_DEFAULT"):
     threading.Thread(target=_debug_default_share, daemon=True).start()
 
 
