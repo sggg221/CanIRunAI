@@ -2,6 +2,10 @@
 
 ## 不用 Railway：改用 Render（一键 Blueprint）
 
+[直接部署到 Render](https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2Fsggg221%2FCanIRunAI)
+
+
+
 GitHub 仓库根目录已经准备好 [render.yaml](../render.yaml)，所以不需要复制项目或填写构建命令。
 
 1. 打开 https://dashboard.render.com/blueprints ，用 GitHub 登录 Render。
