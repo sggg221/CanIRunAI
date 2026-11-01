@@ -52,10 +52,10 @@ footer{font-size:12px;color:var(--muted);margin-top:35px}
 <div class="eyebrow">DOUYIN · LIVE OBSERVER</div>
 <h1>直播间神秘人观察</h1>
 <p class="sub">只保留一个功能：观察直播间匿名用户事件。显示协议返回的昵称和账号标识，不保证识别匿名用户的真实抖音账号或现实身份。</p>
-<div id="preview" class="preview">当前打开的是 GitHub Pages 静态预览。实时监听需要先将仓库中的 douyin-mystery 目录部署到 Railway，然后打开 Railway 的网址。</div>
+<div id="preview" class="preview">当前打开的是 GitHub Pages 静态预览。实时监听需要打开已部署的 Render 网页。</div>
 <section class="panel">
   <div class="inputs">
-    <div><label for="room">直播间链接 / 数字房间号</label><input id="room" placeholder="https://live.douyin.com/123456789" autocomplete="off" spellcheck="false"></div>
+    <div><label for="room">抖音直播分享文案 / 短链接 / 房间号</label><input id="room" placeholder="粘贴 https://v.douyin.com/... 或整段分享文字" autocomplete="off" spellcheck="false"></div>
     <div><label for="token">私有访问口令</label><input id="token" type="password" placeholder="DASHBOARD_TOKEN" autocomplete="off"></div>
   </div>
   <div class="controls">
@@ -78,6 +78,8 @@ footer{font-size:12px;color:var(--muted);margin-top:35px}
 <script>
 const $=id=>document.getElementById(id);
 const staticPreview=location.hostname.endsWith(".github.io");
+const initialRoom=new URLSearchParams(location.search).get("room");
+if(initialRoom && initialRoom.length < 1900) $("room").value=initialRoom;
 if(staticPreview)$("preview").style.display="block";
 function error(text){const el=$("error");el.hidden=!text;el.textContent=text||""}
 function element(tag,text,cls){const el=document.createElement(tag);if(text!=null)el.textContent=String(text);if(cls)el.className=cls;return el}
@@ -123,13 +125,13 @@ async function refresh(){
  try{render(await call("/api/status"))}catch(e){error(e.message)}
 }
 $("start").onclick=async()=>{
- if(staticPreview){error("这是静态预览，请打开 Railway 部署后的网址");return}
+ if(staticPreview){error("这是静态预览，请打开 Render 正式网址");return}
  $("start").disabled=true;
  try{await call("/api/start","POST",{room:$("room").value.trim()});await refresh()}
  catch(e){error(e.message)}finally{$("start").disabled=false}
 };
 $("stop").onclick=async()=>{
- if(staticPreview){error("这是静态预览，请打开 Railway 网址");return}
+ if(staticPreview){error("这是静态预览，请打开 Render 正式网址");return}
  try{await call("/api/stop","POST");await refresh()}catch(e){error(e.message)}
 };
 setInterval(refresh,3000);
