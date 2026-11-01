@@ -332,8 +332,77 @@ def _diagnostic_live_info():
         app.logger.warning("share-self-test error=%s", type(exc).__name__)
 
 
+def _probe_websocket():
+    """Bounded test of the live stream; only publish aggregate event counts in logs."""
+    raw = os.getenv("ROOM_SHARE_DEFAULT", "")
+    try:
+        room = get_room(raw)
+        if not room:
+            app.logger.warning("ws-probe result=no_room")
+            return
+
+        class Probe(MysteryHunter):
+            def __init__(self, rid):
+                super().__init__(rid, verbose=False)
+                self.opened = False
+                self.frames = 0
+                self.messages = 0
+                self.error_type = ""
+                self.error_brief = ""
+
+            def on_open(self, ws):
+                self.opened = True
+
+            def on_error(self, ws, error):
+                self.error_type = type(error).__name__
+                # Only print type and coarse cause, not packet contents or credentials.
+                self.error_brief = str(error).split("?")[0][:100]
+
+            def on_close(self, ws, code, message):
+                pass
+
+            def on_message(self, ws, payload):
+                self.frames += 1
+                try:
+                    frame = Live_pb2.PushFrame()
+                    frame.ParseFromString(payload)
+                    unpacked = gzip.decompress(frame.payload)
+                    message = Live_pb2.LiveResponse()
+                    message.ParseFromString(unpacked)
+                    self.messages += len(message.messagesList)
+                except Exception:
+                    pass
+
+        probe = Probe(room)
+
+        def stop_probe():
+            if probe.ws:
+                try:
+                    probe.ws.close()
+                except Exception:
+                    pass
+
+        timer = threading.Timer(22, stop_probe)
+        timer.daemon = True
+        timer.start()
+        app.logger.warning("ws-probe started")
+        try:
+            probe.connect()
+        finally:
+            timer.cancel()
+        app.logger.warning(
+            "ws-probe result opened=%s frames=%d messages=%d error_type=%s error_brief=%s",
+            probe.opened, probe.frames, probe.messages, probe.error_type or "-",
+            probe.error_brief or "-",
+        )
+    except Exception as exc:
+        app.logger.warning("ws-probe failure type=%s message=%s",
+                           type(exc).__name__, str(exc).split("?")[0][:110])
+
+
 if os.getenv("SHARE_DIAGNOSTICS", "0") == "1":
     threading.Thread(target=_diagnostic_live_info, daemon=True).start()
+    threading.Thread(target=_probe_websocket, daemon=True).start()
 
 
 if __name__ == "__main__":
