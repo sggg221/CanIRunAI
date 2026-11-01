@@ -103,7 +103,8 @@ def get_room(raw):
                     return None
                 url = candidate
                 continue
-            body = response.raw.read(1048576).decode("utf-8", errors="replace")
+            response.raw.decode_content = True
+            body = response.raw.read(2097152).decode("utf-8", errors="replace")
             if saw_reflow or parsed.hostname == "live.douyin.com":
                 # Douyin embeds JSON in both escaped and unescaped form.
                 normalized = body.replace("\\", "")
@@ -146,9 +147,12 @@ def _debug_default_share():
                         return
                     url = candidate
                     continue
-                body = response.raw.read(1048576).decode("utf-8", errors="replace").replace("\\", "")
+                response.raw.decode_content = True
+                body = response.raw.read(2097152).decode("utf-8", errors="replace").replace("\\", "")
                 app.logger.warning(
-                    "share-resolve final owner_short_id=%s room_id_found=%s web_rid=%s",
+                    "share-resolve final encoding=%s type=%s decoded_len=%d html_like=%s owner_short_id=%s room_id_found=%s web_rid=%s",
+                    response.headers.get("Content-Encoding", "-"), response.headers.get("Content-Type", "-")[:35], len(body),
+                    body.lstrip().startswith(("<", "{")),
                     bool(OWNER_SHORT_ID.search(body)),
                     bool(re.search(r'"roomId"\s*:', body)),
                     bool(WEBRID_IN_HTML.search(body)),
