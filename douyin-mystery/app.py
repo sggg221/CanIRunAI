@@ -23,7 +23,7 @@ if len(TOKEN) < 16:
 
 lock = threading.RLock()
 events = deque(maxlen=150)
-state = dict(status="idle", room="", connected=False, error="", total=0, count=0, hunter=None)
+state = dict(status="idle", room="", connected=False, error="", count=0, hunter=None)
 
 def protected(func):
     @wraps(func)
@@ -141,6 +141,11 @@ DouyinAPI.get_live_info = staticmethod(_public_live_info)
 
 def limited(value, max_length=180):
     return str(value or "").strip()[:max_length]
+
+
+def is_confirmed_mystery(user):
+    """Strict filter: 1 means mystery_man, while is_anonymous is not sufficient."""
+    return int(getattr(user, "mystery_man", 0) or 0) == 1
 
 def _connect_live(self):
     info = DouyinAPI.get_live_info(None, self.live_id)
@@ -279,12 +284,9 @@ class Observer(MysteryHunter):
                 msg = message_class()
                 msg.ParseFromString(item.payload)
                 user = msg.user
-                with lock:
-                    if state["hunter"] is not self:
-                        return
-                    if action == "进场":
-                        state["total"] += 1
-                if not (user.mystery_man or user.is_anonymous):
+                # Normal entry and generic anonymous flags are not mystery evidence.
+                # Do not record, count or return anything for ordinary viewers.
+                if not is_confirmed_mystery(user):
                     continue
                 record = dict(
                     at=int(time.time()), action=action,
@@ -354,7 +356,7 @@ def status():
     with lock:
         return jsonify(status=state["status"], room=state["room"],
             connected=state["connected"], error=state["error"],
-            total=state["total"], count=state["count"], events=list(events))
+            count=state["count"], events=list(events))
 
 @app.post("/api/start")
 @protected
@@ -371,7 +373,7 @@ def start():
         hunter = Observer(room)
         events.clear()
         state.update(status="starting", room=room, connected=False, error="",
-                     count=0, total=0, hunter=hunter)
+                     count=0, hunter=hunter)
     threading.Thread(target=run, args=(hunter,), daemon=True).start()
     return jsonify(ok=True)
 
