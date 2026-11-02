@@ -30,7 +30,7 @@ button:disabled{opacity:.5;cursor:wait}
 .small{font-size:12px;color:var(--muted);margin:12px 0 0}
 .alert{white-space:pre-wrap;color:#ffd9e3;background:#42202e;border:1px solid #79354e;border-radius:9px;padding:10px 13px;margin-top:14px}
 .preview{display:none;background:#1a2837;color:#d4e3f3;padding:14px;border-radius:11px;border:1px solid #345272;margin-bottom:16px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 27px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:16px 0 27px}
 .stat{padding:18px 19px}
 .stat b{display:block;font-size:28px;font-variant-numeric:tabular-nums;font-weight:750}
 .stat span{font-size:12px;color:var(--muted)}
@@ -51,7 +51,7 @@ footer{font-size:12px;color:var(--muted);margin-top:35px}
 <main>
 <div class="eyebrow">DOUYIN · LIVE OBSERVER</div>
 <h1>直播间神秘人观察</h1>
-<p class="sub">只保留一个功能：观察直播间匿名用户事件。显示协议返回的昵称和账号标识，不保证识别匿名用户的真实抖音账号或现实身份。</p>
+<p class="sub">只显示直播协议明确标记为「神秘人」的事件。普通观众、普通进场和泛匿名标记不计入结果，也不代表能查出主动隐藏的真实身份。</p>
 <div id="preview" class="preview">当前打开的是 GitHub Pages 静态预览。实时监听需要打开已部署的 Render 网页。</div>
 <section class="panel">
   <div class="inputs">
@@ -67,13 +67,12 @@ footer{font-size:12px;color:var(--muted);margin-top:35px}
   <div id="error" class="alert" role="alert" hidden></div>
 </section>
 <div class="stats">
-  <div class="stat"><b id="count">0</b><span>匿名事件</span></div>
-  <div class="stat"><b id="total">0</b><span>接收进场事件</span></div>
+  <div class="stat"><b id="count">0</b><span>已确认神秘人事件（非人数）</span></div>
   <div class="stat"><b id="activeRoom">—</b><span>监听房间</span></div>
 </div>
-<div class="heading"><h2>实时记录</h2><small>每 3 秒刷新</small></div>
+<div class="heading"><h2>神秘人事件</h2><small>只显示神秘人 · 每 3 秒刷新</small></div>
 <div id="entries" aria-live="polite"><div class="empty">输入直播间和访问口令，点击开始监听。</div></div>
-<footer>说明：secUid 是平台账号标识，不等于真实身份。数据可能脱敏、缺失或过期。该工具只保留当前服务器内存中的近期记录，重启会清空。</footer>
+<footer>仅当直播协议中的 mystery_man 明确为 1 时才显示事件；is_anonymous 并不等于神秘人。一次用户互动可能产生多条事件。昵称、账号字段不证明现实身份；记录只在本次服务内存中保留。</footer>
 </main>
 <script>
 const $=id=>document.getElementById(id);
@@ -100,12 +99,11 @@ function render(data){
  $("status").textContent=stateText[data.status]||data.status;
  $("dot").className="dot"+(data.connected?" on":["starting","reconnecting"].includes(data.status)?" wait":"");
  $("count").textContent=data.count||0;
- $("total").textContent=data.total||0;
  $("activeRoom").textContent=data.room||"—";
  error(data.error||"");
  const root=$("entries");root.replaceChildren();
  if(!data.events||!data.events.length){
-   root.append(element("div",data.status==="listening"?"已连接，等待匿名事件…":"暂无监听记录","empty"));return;
+   root.append(element("div",data.status==="listening"?"已连接，等待神秘人事件…":"暂无监听记录","empty"));return;
  }
  for(const e of data.events){
    const article=element("article",null,"entry");
