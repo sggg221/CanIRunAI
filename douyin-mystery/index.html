@@ -96,9 +96,9 @@ async function call(path,method,body){
  return data;
 }
 function render(data){
- const stateText={idle:"未连接",starting:"连接中",listening:"监听中",stopped:"已停止"};
+ const stateText={idle:"未连接",starting:"连接中",listening:"监听中",reconnecting:"正在重连",stopped:"已停止"};
  $("status").textContent=stateText[data.status]||data.status;
- $("dot").className="dot"+(data.connected?" on":data.status==="starting"?" wait":"");
+ $("dot").className="dot"+(data.connected?" on":["starting","reconnecting"].includes(data.status)?" wait":"");
  $("count").textContent=data.count||0;
  $("total").textContent=data.total||0;
  $("activeRoom").textContent=data.room||"—";
