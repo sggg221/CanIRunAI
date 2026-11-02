@@ -22,8 +22,12 @@ if len(TOKEN) < 16:
     raise RuntimeError("Set DASHBOARD_TOKEN (16+ chars) in Render Variables")
 
 lock = threading.RLock()
-events = deque(maxlen=150)
-state = dict(status="idle", room="", connected=False, error="", count=0, hunter=None)
+# Only store aggregate, public rank data. Never cache names/ids of ordinary viewers.
+rankings = {
+    "user_seq": {"received": False, "updated_at": None, "items": [], "source": "直播贡献榜"},
+    "room_rank": {"received": False, "updated_at": None, "items": [], "source": "直播榜单"},
+}
+state = dict(status="idle", room="", connected=False, error="", hunter=None)
 
 def protected(func):
     @wraps(func)
@@ -143,9 +147,52 @@ def limited(value, max_length=180):
     return str(value or "").strip()[:max_length]
 
 
-def is_confirmed_mystery(user):
-    """Strict filter: 1 means mystery_man, while is_anonymous is not sufficient."""
-    return int(getattr(user, "mystery_man", 0) or 0) == 1
+def _hidden_label(user, hidden=False):
+    """Classify only via platform-supplied flags, not names or identity inference."""
+    mystery = int(getattr(user, "mystery_man", 0) or 0)
+    anonymous = bool(getattr(user, "is_anonymous", False))
+    if mystery:
+        return "神秘人", "mystery_flag"
+    if anonymous:
+        return "匿名用户", "anonymous_flag"
+    if hidden:
+        return "隐藏资料", "hidden_flag"
+    return None, None
+
+
+def _rank_rows(message, message_type):
+    rows = []
+    if message_type == "WebcastRoomUserSeqMessage":
+        parsed = Live_pb2.RoomUserSeqMessage()
+        parsed.ParseFromString(message.payload)
+        board = parsed.ranksList if len(parsed.ranksList) else parsed.seatsList
+        for i, row in enumerate(board):
+            label, reason = _hidden_label(row.user, bool(row.isHidden))
+            if not label:
+                continue
+            value = str(row.scoreDescription or row.exactlyScore or row.score or "").strip()
+            rows.append({
+                "rank": int(row.rank) if row.rank else i + 1,
+                "label": label,
+                "flag": reason,
+                "score": value[:64] if value else "未公开",
+            })
+    elif message_type == "WebcastRoomRankMessage":
+        parsed = Live_pb2.RoomRankMessage()
+        parsed.ParseFromString(message.payload)
+        for i, row in enumerate(parsed.ranksList):
+            label, reason = _hidden_label(row.user, bool(row.profileHidden))
+            if not label:
+                continue
+            rows.append({
+                "rank": i + 1,
+                "label": label,
+                "flag": reason,
+                "score": str(row.scoreStr or "未公开")[:64],
+            })
+    return rows
+
+
 
 def _connect_live(self):
     info = DouyinAPI.get_live_info(None, self.live_id)
@@ -263,8 +310,6 @@ class Observer(MysteryHunter):
             data = Live_pb2.LiveResponse()
             data.ParseFromString(gzip.decompress(frame.payload))
             self.frame_count += 1
-            # Douyin requires application-level acknowledgments for selected frames.
-            # Missing this ACK commonly leads to a disconnection after a few seconds.
             if data.needAck:
                 ack = Live_pb2.PushFrame()
                 ack.payloadType = "ack"
@@ -272,36 +317,35 @@ class Observer(MysteryHunter):
                 ack.logId = frame.logId
                 ws.send(ack.SerializeToString(), opcode=0x02)
                 self.ack_count += 1
-            classes = {
-                "WebcastMemberMessage": ("进场", Live_pb2.MemberMessage),
-                "WebcastChatMessage": ("发言", Live_pb2.ChatMessage),
-                "WebcastGiftMessage": ("送礼", Live_pb2.GiftMessage),
-            }
-            for item in data.messagesList:
-                if item.method not in classes:
+
+            # Only process two rank message types; ignore viewer entry, chat,
+            # gifts and all other personal interaction records.
+            for message in data.messagesList:
+                board_key = {
+                    "WebcastRoomUserSeqMessage": "user_seq",
+                    "WebcastRoomRankMessage": "room_rank",
+                }.get(message.method)
+                if not board_key:
                     continue
-                action, message_class = classes[item.method]
-                msg = message_class()
-                msg.ParseFromString(item.payload)
-                user = msg.user
-                # Normal entry and generic anonymous flags are not mystery evidence.
-                # Do not record, count or return anything for ordinary viewers.
-                if not is_confirmed_mystery(user):
+                try:
+                    items = _rank_rows(message, message.method)
+                except Exception:
+                    app.logger.warning("rank-frame parse_error source=%s", board_key)
                     continue
-                record = dict(
-                    at=int(time.time()), action=action,
-                    display=limited(user.desensitized_nickname, 80) or "神秘人",
-                    nickname=limited(user.nickname, 80),
-                    sec_uid=limited(user.sec_uid),
-                    level=int(user.consume_diamond_level or 0),
-                )
                 with lock:
-                    if state["hunter"] is self:
-                        events.appendleft(record)
-                        state["count"] += 1
+                    if state["hunter"] is not self:
+                        return
+                    rankings[board_key] = {
+                        "source": "直播贡献榜" if board_key == "user_seq" else "直播榜单",
+                        "received": True,
+                        "updated_at": int(time.time()),
+                        "items": items,
+                    }
         except Exception:
-            # Platform message format can change; do not log raw user payloads.
-            return
+            # Wire format may change; do not log raw packets or user data.
+            app.logger.warning("rank-frame decode_error")
+
+
 
 def run(hunter):
     # Automatically recover a brief upstream disconnect, but avoid infinite retries.
@@ -356,7 +400,7 @@ def status():
     with lock:
         return jsonify(status=state["status"], room=state["room"],
             connected=state["connected"], error=state["error"],
-            count=state["count"], events=list(events))
+            rankings=rankings)
 
 @app.post("/api/start")
 @protected
@@ -371,9 +415,13 @@ def start():
         if state["status"] in {"starting", "listening"}:
             return jsonify(error="已有监听任务，请先停止"), 409
         hunter = Observer(room)
-        events.clear()
+        for key in rankings:
+            rankings[key] = {
+                "source": "直播贡献榜" if key == "user_seq" else "直播榜单",
+                "received": False, "updated_at": None, "items": []
+            }
         state.update(status="starting", room=room, connected=False, error="",
-                     count=0, hunter=hunter)
+                     hunter=hunter)
     threading.Thread(target=run, args=(hunter,), daemon=True).start()
     return jsonify(ok=True)
 
