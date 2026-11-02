@@ -204,6 +204,7 @@ class Observer(MysteryHunter):
         self.ack_count = 0
         self.frame_count = 0
         self._heartbeat_stop = threading.Event()
+        self._connected_since = 0.0
 
     def connect(self):
         self._heartbeat_stop.clear()
@@ -223,6 +224,8 @@ class Observer(MysteryHunter):
 
     def on_open(self, ws):
         self.opened = True
+        self._connected_since = time.monotonic()
+        app.logger.info("live-ws opened")
         with lock:
             if state["hunter"] is not self:
                 ws.close()
@@ -238,6 +241,10 @@ class Observer(MysteryHunter):
 
     def on_close(self, ws, code, reason):
         self._heartbeat_stop.set()
+        elapsed = max(0.0, time.monotonic() - self._connected_since) if self._connected_since else 0.0
+        app.logger.warning("live-ws closed code=%s duration_s=%.1f frames=%s acks=%s",
+                           code if isinstance(code, int) else "none",
+                           elapsed, self.frame_count, self.ack_count)
         with lock:
             if state["hunter"] is self:
                 code_text = str(code) if isinstance(code, int) else "未知"
@@ -382,74 +389,6 @@ def stop():
         except Exception:
             pass
     return jsonify(ok=True)
-
-def _smoke_keepalive():
-    """Opt-in, short-lived transport check; never read or retain participant details."""
-    raw = os.getenv("ROOM_SHARE_DEFAULT", "")
-    try:
-        room = get_room(raw)
-        if not room:
-            app.logger.warning("keepalive-check result=room_unavailable")
-            return
-
-        class Probe(Observer):
-            def __init__(self, rid):
-                super().__init__(rid)
-                self.started = 0
-                self.frames = 0
-                self.acks = 0
-                self.code = "-"
-                self.error_kind = "-"
-                self._timer = None
-
-            def on_open(self, ws):
-                self.opened = True
-                self.started = time.monotonic()
-                threading.Thread(target=self._heartbeat, args=(ws,), daemon=True).start()
-                self._timer = threading.Timer(26, ws.close)
-                self._timer.daemon = True
-                self._timer.start()
-
-            def on_message(self, ws, message):
-                try:
-                    frame = Live_pb2.PushFrame()
-                    frame.ParseFromString(message)
-                    packet = Live_pb2.LiveResponse()
-                    packet.ParseFromString(gzip.decompress(frame.payload))
-                    self.frames += 1
-                    if packet.needAck:
-                        ack = Live_pb2.PushFrame()
-                        ack.payloadType = "ack"
-                        ack.payload = packet.internalExt.encode("utf-8")
-                        ack.logId = frame.logId
-                        ws.send(ack.SerializeToString(), opcode=0x02)
-                        self.acks += 1
-                except Exception:
-                    pass
-
-            def on_close(self, ws, code, reason):
-                self._heartbeat_stop.set()
-                if self._timer:
-                    self._timer.cancel()
-                self.code = str(code) if isinstance(code, int) else "none"
-
-            def on_error(self, ws, error):
-                self.error_kind = type(error).__name__
-
-        test = Probe(room)
-        test.connect()
-        elapsed = round(time.monotonic() - test.started, 1) if test.started else 0
-        app.logger.warning(
-            "keepalive-check opened=%s duration_s=%s frames=%s ack_sent=%s close_code=%s error=%s",
-            test.opened, elapsed, test.frames, test.acks, test.code, test.error_kind
-        )
-    except Exception as exc:
-        app.logger.warning("keepalive-check failed exception=%s", type(exc).__name__)
-
-
-if os.getenv("WS_KEEPALIVE_TEST", "0") == "1":
-    threading.Thread(target=_smoke_keepalive, daemon=True).start()
-
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5000")))
