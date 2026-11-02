@@ -201,25 +201,48 @@ class Observer(MysteryHunter):
     def __init__(self, room):
         super().__init__(room, verbose=False)
         self.opened = False
+        self.ack_count = 0
+        self.frame_count = 0
+        self._heartbeat_stop = threading.Event()
 
     def connect(self):
+        self._heartbeat_stop.clear()
         return _connect_live(self)
+
+    def _heartbeat(self, ws):
+        # Douyin expects binary PushFrame heartbeat packets, not just RFC 6455 pings.
+        while not self._heartbeat_stop.is_set():
+            try:
+                frame = Live_pb2.PushFrame()
+                frame.payloadType = "hb"
+                ws.send(frame.SerializeToString(), opcode=0x02)
+            except Exception:
+                break
+            if self._heartbeat_stop.wait(10):
+                break
 
     def on_open(self, ws):
         self.opened = True
         with lock:
-            if state["hunter"] is self:
-                state.update(status="listening", connected=True, error="")
+            if state["hunter"] is not self:
+                ws.close()
+                return
+            state.update(status="listening", connected=True, error="")
+        threading.Thread(target=self._heartbeat, args=(ws,), daemon=True).start()
 
     def on_error(self, ws, error):
+        # WebSocket exception strings may include signed URLs: never show them to clients.
         with lock:
             if state["hunter"] is self:
-                state["error"] = limited(error, 200)
+                state["error"] = "直播连接异常：" + type(error).__name__
 
     def on_close(self, ws, code, reason):
+        self._heartbeat_stop.set()
         with lock:
             if state["hunter"] is self:
-                state.update(status="stopped", connected=False, error="连接已关闭")
+                code_text = str(code) if isinstance(code, int) else "未知"
+                state.update(status="reconnecting", connected=False,
+                             error="直播连接中断（代码 " + code_text + "），准备重连")
 
     def on_message(self, ws, payload):
         try:
@@ -227,6 +250,16 @@ class Observer(MysteryHunter):
             frame.ParseFromString(payload)
             data = Live_pb2.LiveResponse()
             data.ParseFromString(gzip.decompress(frame.payload))
+            self.frame_count += 1
+            # Douyin requires application-level acknowledgments for selected frames.
+            # Missing this ACK commonly leads to a disconnection after a few seconds.
+            if data.needAck:
+                ack = Live_pb2.PushFrame()
+                ack.payloadType = "ack"
+                ack.payload = data.internalExt.encode("utf-8")
+                ack.logId = frame.logId
+                ws.send(ack.SerializeToString(), opcode=0x02)
+                self.ack_count += 1
             classes = {
                 "WebcastMemberMessage": ("进场", Live_pb2.MemberMessage),
                 "WebcastChatMessage": ("发言", Live_pb2.ChatMessage),
@@ -262,18 +295,39 @@ class Observer(MysteryHunter):
             return
 
 def run(hunter):
-    try:
-        hunter.connect()
-    except Exception as error:
+    # Automatically recover a brief upstream disconnect, but avoid infinite retries.
+    for retry in range(4):
         with lock:
-            if state["hunter"] is hunter:
-                state["error"] = "启动失败：" + limited(error)
-    finally:
+            if state["hunter"] is not hunter:
+                return
+            if retry:
+                state.update(status="reconnecting", connected=False,
+                             error=f"重新连接中（第 {retry}/3 次）")
+        try:
+            hunter.connect()
+        except Exception as exc:
+            with lock:
+                if state["hunter"] is hunter:
+                    state["error"] = "连接失败：" + type(exc).__name__
+        finally:
+            hunter._heartbeat_stop.set()
+
         with lock:
-            if state["hunter"] is hunter:
-                state.update(status="stopped", connected=False)
-                if not hunter.opened and not state["error"]:
-                    state["error"] = "无法连接。请确认正在直播且上游接口可用。"
+            if state["hunter"] is not hunter:
+                return
+            state["connected"] = False
+        if retry < 3:
+            # Allow Stop to cancel between attempts.
+            for _ in range((retry + 1) * 4):
+                with lock:
+                    if state["hunter"] is not hunter:
+                        return
+                time.sleep(0.5)
+
+    with lock:
+        if state["hunter"] is hunter:
+            state.update(status="stopped", connected=False,
+                         error="连续连接失败，请确认直播是否结束，或稍后重新开始")
 
 @app.get("/")
 def index():
@@ -320,6 +374,8 @@ def stop():
     with lock:
         hunter = state["hunter"]
         state.update(hunter=None, status="stopped", connected=False, error="")
+    if hunter:
+        hunter._heartbeat_stop.set()
     if hunter and hunter.ws:
         try:
             hunter.ws.close()
