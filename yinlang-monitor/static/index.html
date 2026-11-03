@@ -46,7 +46,8 @@
     <footer class="footer">音浪记录 · 本地工作台 v1.0 <span>数据仅供采集统计与核对</span></footer>
   </main>
 </div>
-<div class="overlay hidden" id="addModal" role="presentation"><form class="modal" id="addForm" aria-labelledby="modalTitle" aria-modal="true" role="dialog"><div class="modal-head"><h2 id="modalTitle">添加监控主播</h2><button type="button" id="closeModal" class="icon-btn" aria-label="关闭">×</button></div><label>主播备注名<input id="newName" maxlength="50" placeholder="例如：小月月" required autocomplete="off" /></label><label>抖音直播间链接 / 直播间号<input id="newRoom" placeholder="https://live.douyin.com/123456789" required autocomplete="off" /></label><p class="form-note">添加后自动尝试连接采集。记录礼物需上游采集服务及有效的抖音登录态。</p><div class="modal-actions"><button type="button" class="btn ghost" id="cancelModal">取消</button><button type="submit" class="btn primary" id="saveBtn">保存并监控</button></div></form></div>
+<div class="overlay hidden" id="addModal" role="presentation"><form class="modal" id="addForm" aria-labelledby="modalTitle" aria-modal="true" role="dialog"><div class="modal-head"><h2 id="modalTitle">添加监控主播</h2><button type="button" id="closeModal" class="icon-btn" aria-label="关闭">×</button></div><label>主播备注名<input id="newName" maxlength="50" placeholder="例如：小月月" required autocomplete="off" /></label><label>抖音分享文案 / 直播链接 / 房间号<textarea id="newRoom" rows="3" maxlength="1500" placeholder="粘贴从抖音复制的整段分享内容，例如：
+【月神】正在直播… https://v.douyin.com/NHSNqpslbyk/" required autocomplete="off"></textarea></label><p class="form-note">可直接粘贴抖音 App 分享文字，系统会自动解析主播长期有效的房间号。短链接若失效会提示重新提供链接；采集礼物还需连接数据源。</p><div class="modal-actions"><button type="button" class="btn ghost" id="cancelModal">取消</button><button type="submit" class="btn primary" id="saveBtn">保存并监控</button></div></form></div>
 <div class="toast hidden" id="toast" role="status"></div>
 <script src="/static/app.js"></script>
 </body></html>

@@ -17,6 +17,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from typing import Optional
+from room_links import resolve_room_input, RoomLinkError
 
 from fastapi import FastAPI, Header, HTTPException, Query, Request
 from fastapi.responses import FileResponse, Response
@@ -134,13 +135,10 @@ def initialize():
 
 
 def parse_live_id(s: str) -> str:
-    s = s.strip()
-    m = re.fullmatch(r'(?:https?://)?live\.douyin\.com/(\d+)(?:[/?#].*)?', s, re.I)
-    if m:
-        return m.group(1)
-    if re.fullmatch(r'\d{3,30}', s):
-        return s
-    raise HTTPException(422, '请填写 live.douyin.com/数字 直播间链接或数字直播间号')
+    try:
+        return resolve_room_input(s)
+    except RoomLinkError as error:
+        raise HTTPException(422, str(error)) from error
 
 
 def as_int(v, default=0):
@@ -185,7 +183,7 @@ def get_streamer(con, streamer_id):
 
 class AddStreamer(BaseModel):
     name: str = Field(min_length=1,max_length=50)
-    room: str = Field(min_length=3,max_length=300)
+    room: str = Field(min_length=3,max_length=1500)
 
 class StatusPayload(BaseModel):
     live_id: str
@@ -427,6 +425,10 @@ def static(name:str):
 @app.get('/api/dashboard')
 def dashboard():
     return summary()
+
+@app.post('/api/resolve-room')
+def resolve_room(body: dict):
+    return {'live_id': parse_live_id(str(body.get('room') or '')), 'kind': 'stable_web_rid'}
 
 @app.post('/api/streamers',status_code=201)
 def add_streamer(s: AddStreamer):
