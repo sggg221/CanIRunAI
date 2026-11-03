@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>音浪记录 · 直播数据工作台</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-symbol">♪</div><div><strong>音浪记录</strong><small>LIVE MONITOR</small></div></div>
+    <nav aria-label="页面导航">
+      <button class="nav active" data-tab="overview"><span>▦</span> 总览</button>
+      <button class="nav" data-tab="streamers"><span>◉</span> 主播管理</button>
+      <button class="nav" data-tab="sessions"><span>▤</span> 直播记录</button>
+      <button class="nav" data-tab="gifts"><span>♧</span> 礼物明细</button>
+    </nav>
+    <div class="sidebar-foot"><span class="live-dot"></span> 数据仅统计已收到的礼物消息 <br/>不等于平台官方结算音浪</div>
+  </aside>
+  <main>
+    <header class="topbar">
+      <div><div class="eyebrow">工作台 <span class="sep">/</span> <span id="pageName">总览</span></div><h1 id="pageTitle">直播音浪概览</h1><p class="subtitle">自动检测开播 · 保存礼物记录 · 回看每场数据</p></div>
+      <div class="actions"><button class="btn ghost" id="refreshBtn">↻ <span>刷新</span></button><button class="btn primary" id="addBtn">＋ 添加主播</button></div>
+    </header>
+    <section class="notice" id="sourceNotice"><span class="status-icon">●</span><div><b id="sourceStatus">检查采集状态中</b><span id="sourceHelp">正在连接服务…</span></div><button class="notice-close" aria-label="关闭提示" onclick="document.getElementById('sourceNotice').style.display='none'">×</button></section>
+
+    <section class="tab-page" id="page-overview">
+      <div class="stats">
+        <article class="stat"><div class="stat-title">今日记录钻石 <span class="stat-glyph">◈</span></div><div class="stat-num" id="todayTotal">—</div><div class="stat-sub" id="todayDesc">基于已接收礼物事件</div></article>
+        <article class="stat"><div class="stat-title">本月记录钻石 <span class="stat-glyph">▦</span></div><div class="stat-num" id="monthTotal">—</div><div class="stat-sub">按礼物发生时间统计</div></article>
+        <article class="stat"><div class="stat-title">已添加主播 <span class="stat-glyph">◎</span></div><div class="stat-num" id="streamerTotal">—</div><div class="stat-sub"><span id="liveTotal">0</span> 位直播中 · <span id="offlineTotal">0</span> 位其他状态</div></article>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h2>主播监控</h2><p>自动连接开启监控的直播间；也可手动标记开播</p></div><button class="text-btn" id="manageBtn">管理主播 <span>→</span></button></div>
+        <div class="table-wrap"><table><thead><tr><th>主播</th><th>监控状态</th><th>最近场次钻石</th><th class="right">操作</th></tr></thead><tbody id="overviewRows"></tbody></table></div>
+      </div>
+      <div class="panel chart-panel"><div class="panel-head"><div><h2>今日音浪趋势</h2><p>按礼物消息产生时间累计的钻石价值</p></div><div class="legend"><i></i> 已记录</div></div><div class="chart" id="chart"><div class="empty">暂无统计数据</div></div></div>
+      <div class="panel"><div class="panel-head"><div><h2>最近直播记录</h2><p>按每次开播保存，下播后可回看</p></div><button class="text-btn" id="allSessionsBtn">全部记录 →</button></div><div class="table-wrap"><table><thead><tr><th>主播</th><th>开播时间</th><th>结束时间</th><th class="right">记录钻石</th></tr></thead><tbody id="recentRows"></tbody></table></div></div>
+    </section>
+
+    <section class="tab-page hidden" id="page-streamers"><div class="panel"><div class="panel-head"><div><h2>主播管理</h2><p>添加直播间号后自动监测，关闭监控不会删除历史</p></div></div><div class="table-wrap"><table><thead><tr><th>主播 / 直播间号</th><th>状态</th><th>自动监控</th><th class="right">操作</th></tr></thead><tbody id="manageRows"></tbody></table></div></div></section>
+    <section class="tab-page hidden" id="page-sessions"><div class="panel"><div class="panel-head"><div><h2>每场直播记录</h2><p>数据存在本地 SQLite，可导出 CSV</p></div><a class="btn ghost" href="/api/export.csv">↓ 导出 CSV</a></div><div class="table-wrap"><table><thead><tr><th>主播</th><th>开播时间</th><th>结束时间</th><th>状态</th><th class="right">记录钻石</th></tr></thead><tbody id="allSessionsRows"></tbody></table></div></div></section>
+    <section class="tab-page hidden" id="page-gifts"><div class="panel"><div class="panel-head"><div><h2>礼物明细</h2><p>每个礼物保存当时单价；没有价格的记录单独标记</p></div><button id="loadGiftsBtn" class="btn ghost">↻ 刷新礼物</button></div><div class="table-wrap"><table><thead><tr><th>时间</th><th>礼物 / 用户</th><th>数量</th><th>当时单价</th><th class="right">钻石价值</th></tr></thead><tbody id="giftRows"></tbody></table></div></div></section>
+    <footer class="footer">音浪记录 · 本地工作台 v1.0 <span>数据仅供采集统计与核对</span></footer>
+  </main>
+</div>
+<div class="overlay hidden" id="addModal" role="presentation"><form class="modal" id="addForm" aria-labelledby="modalTitle" aria-modal="true" role="dialog"><div class="modal-head"><h2 id="modalTitle">添加监控主播</h2><button type="button" id="closeModal" class="icon-btn" aria-label="关闭">×</button></div><label>主播备注名<input id="newName" maxlength="50" placeholder="例如：小月月" required autocomplete="off" /></label><label>抖音直播间链接 / 直播间号<input id="newRoom" placeholder="https://live.douyin.com/123456789" required autocomplete="off" /></label><p class="form-note">添加后自动尝试连接采集。记录礼物需上游采集服务及有效的抖音登录态。</p><div class="modal-actions"><button type="button" class="btn ghost" id="cancelModal">取消</button><button type="submit" class="btn primary" id="saveBtn">保存并监控</button></div></form></div>
+<div class="toast hidden" id="toast" role="status"></div>
+<script src="/static/app.js"></script>
+</body></html>
