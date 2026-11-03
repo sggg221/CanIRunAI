@@ -15,7 +15,7 @@ function isAuthenticated(req) {
   const a = Buffer.from(provided), b = Buffer.from(token);
   return a.length === b.length && timingSafeEqual(a, b);
 }
-const allowedRoutes = new Set(['GET /api/rooms', 'POST /api/rooms/connect', 'GET /api/stats']);
+const allowedRoutes = new Set(['GET /api/rooms', 'POST /api/rooms/connect', 'GET /api/stats', 'GET /api/accounts']);
 const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/healthz') {
     http.get('http://127.0.0.1:8757/api/stats', r => {
