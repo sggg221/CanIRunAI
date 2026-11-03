@@ -405,7 +405,7 @@ async def protect_dashboard(request: Request, call_next):
             pass
     if not valid:
         return Response('需要登录后访问音浪监控', status_code=401,
-                        headers={'WWW-Authenticate': 'Basic realm="音浪监控"'})
+                        headers={'WWW-Authenticate': 'Basic realm="Yinlang Monitor"'})
     return await call_next(request)
 
 @app.get('/healthz')
