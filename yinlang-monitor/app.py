@@ -29,6 +29,7 @@ DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 TZ = ZoneInfo(os.environ.get('REPORT_TZ', 'Asia/Shanghai'))
 INGEST_KEY = os.environ.get('INGEST_KEY', '')
 DYHUB_URL = os.environ.get('DYHUB_URL', '').rstrip('/')
+DYHUB_TOKEN = os.environ.get('DYHUB_TOKEN', '')
 DYHUB_INTERVAL = max(20, int(os.environ.get('DYHUB_POLL_SECONDS', '60')))
 DYHUB_ACCOUNT_ID = os.environ.get('DYHUB_ACCOUNT_ID', '')
 state = {'upstream': '未配置', 'last_sync': None, 'error': None}
@@ -261,6 +262,8 @@ def summary():
 def dyhub_request(path, method='GET', body=None):
     data=json.dumps(body).encode('utf-8') if body is not None else None
     headers={'Accept':'application/json','User-Agent':'YinlangMonitor/1.0'}
+    if DYHUB_TOKEN:
+        headers['X-Collector-Token'] = DYHUB_TOKEN
     if body is not None:
         headers['Content-Type']='application/json'
     req=urllib.request.Request(DYHUB_URL+path, data=data, method=method, headers=headers)
@@ -311,6 +314,14 @@ def receive_event(event):
 
 
 def sync_rooms():
+    # Login is needed for a reliable gift-event feed; show the missing step.
+    login_warning = None
+    try:
+        accounts = dyhub_request('/api/accounts').get('accounts', [])
+        if not any(a.get('hasLogin') for a in accounts):
+            login_warning = '采集服务已连接，但未授权登录抖音，礼物事件可能不可见；请在采集服务中配置授权登录态'
+    except (urllib.error.URLError, urllib.error.HTTPError, ValueError, OSError):
+        pass
     with closing(db()) as con:
         targets=[dict(r) for r in con.execute('SELECT * FROM streamers WHERE enabled=1').fetchall()]
     rooms=dyhub_request('/api/rooms').get('rooms',[])
@@ -334,7 +345,7 @@ def sync_rooms():
         except (urllib.error.URLError,urllib.error.HTTPError,ValueError,OSError) as e:
             problems.append(f"{r['name']}: {str(e)[:70]}")
     state.update(upstream=f'已连接 DyHub · {good}/{len(targets)} 个直播间',last_sync=now_ms(),
-                 error='；'.join(problems) if problems else None)
+                 error='；'.join(problems) if problems else login_warning)
 
 
 def poll_worker(stop_event):
@@ -356,7 +367,8 @@ def stream_worker(stop_event):
     url=f'{scheme}://{p.netloc}/ws?types=gift,roomStatus'
     while not stop_event.is_set():
         try:
-            with connect(url,open_timeout=8,close_timeout=2,ping_interval=20) as ws:
+            with connect(url,open_timeout=8,close_timeout=2,ping_interval=20,
+                         additional_headers={'X-Collector-Token': DYHUB_TOKEN} if DYHUB_TOKEN else {}) as ws:
                 state['events']='实时连接正常'
                 while not stop_event.is_set():
                     try:raw=ws.recv(timeout=5)
